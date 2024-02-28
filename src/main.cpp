@@ -15,8 +15,10 @@ int main()
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
 
-    int               number = 5;
-    float             radius = 0.02f;
+    int               number            = 5;
+    float             radius            = 0.02f;
+    float             separation_factor = 1.0f;
+    float             separation_radius = 0.1f;
     std::vector<Boid> boids(number);
 
     // Actual application code
@@ -28,6 +30,8 @@ int main()
         ImGui::Begin("Controls");
         ImGui::SliderInt("Number", &number, 0, 100);
         ImGui::SliderFloat("Radius", &radius, 0.02f, 0.05f);
+        ImGui::SliderFloat("Separation Factor", &separation_factor, 0.0f, 1.0f);
+        ImGui::SliderFloat("Separation Radius", &separation_radius, 0.0f, 0.5f);
         ImGui::End();
     };
 
@@ -52,7 +56,7 @@ int main()
             {
                 if (i != j)
                 { // Don't compare a boid with itself
-                    boids[i].repulsion(boids[j]);
+                    boids[i].separation(boids[j], separation_factor, separation_radius);
                 }
             }
             // boids[i].drag();

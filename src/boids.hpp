@@ -39,7 +39,7 @@ public:
         }
 
         //! Pas terrible
-        float maxSpeed = 5.0;
+        float maxSpeed = 1.0f;
         float speed    = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
         if (speed > maxSpeed)
         {
@@ -65,41 +65,17 @@ public:
         velocity.y -= directionY * decelerationFactor;
     }
 
-    void repulsion(Boid& other)
+    void separation(Boid& other, float separation_factor, float separation_radius)
     {
-        float dx       = other.position.x - position.x;
-        float dy       = other.position.y - position.y;
-        float distance = std::sqrt(dx * dx + dy * dy);
-        if (distance < 0.2f)
-        { // Distance de répulsion arbitraire
-            // Appliquer une force de répulsion inversement proportionnelle à la distance
-            velocity.x -= dx / (distance * distance);
-            velocity.y -= dy / (distance * distance);
+        glm::vec2 separation_force = {0, 0};
+        glm::vec2 delta            = other.position - position;
+        float     distance         = glm::length(delta);
+
+        if (distance < separation_radius)
+        {
+            separation_force = -delta * separation_factor / distance * distance;
+            // separation_force = -delta / distance * (distance / separation_factor);
         }
-        // float distance     = glm::distance(position, other.get_position());
-        // float min_distance = 0.1f;
-        // float max_force    = 0.1f; // Limite de la force de répulsion
-
-        // if (distance < min_distance)
-        // {
-        //     glm::vec2 direction       = glm::normalize(position - other.get_position());
-        //     glm::vec2 repulsion_force = direction * max_force; // Limiter la force de répulsion
-        //     velocity += repulsion_force;                       // Ajouter la force de répulsion à la vitesse
-        //     other.velocity += repulsion_force;                 // Ajouter la force de répulsion à la vitesse
-        // }
-
-        // glm::vec2 repulsion;
-        // float     perceptionRadius = 0.5f;
-
-        // float d = glm::distance(position, other.position);
-
-        // if (d < perceptionRadius && d > 0)
-        // {
-        //     glm::vec2 diff = position - other.position;
-        //     diff /= (d * d);
-        //     repulsion += diff;
-        // }
-
-        // acceleration += repulsion;
+        velocity += separation_force;
     }
 };

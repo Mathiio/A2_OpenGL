@@ -19,6 +19,8 @@ int main()
     float             radius            = 0.02f;
     float             separation_factor = 1.0f;
     float             separation_radius = 0.1f;
+    float             alignment_factor  = 1.0f;
+    float             alignment_radius  = 0.1f;
     std::vector<Boid> boids(number);
 
     // Actual application code
@@ -28,10 +30,12 @@ int main()
     ctx.imgui = [&]() {
         // Show a simple window
         ImGui::Begin("Controls");
-        ImGui::SliderInt("Number", &number, 0, 100);
+        ImGui::SliderInt("Number", &number, 0, 200);
         ImGui::SliderFloat("Radius", &radius, 0.02f, 0.05f);
         ImGui::SliderFloat("Separation Factor", &separation_factor, 0.0f, 1.0f);
         ImGui::SliderFloat("Separation Radius", &separation_radius, 0.0f, 0.5f);
+        ImGui::SliderFloat("Alignment Factor", &alignment_factor, 0.0f, 1.0f);
+        ImGui::SliderFloat("Alignment Radius", &alignment_radius, 0.0f, 0.5f);
         ImGui::End();
     };
 
@@ -42,25 +46,18 @@ int main()
 
         boids.resize(number);
 
-        // for (auto& boid : boids)
-        // {
-        //     boid.set_radius(radius);
-        //     boid.update_position();
-        //     draw_boid(ctx, boid);
-        // }
         for (size_t i = 0; i < boids.size(); ++i)
         {
             boids[i].set_radius(radius);
-            // Assume here you want each boid to avoid collision with every other boid
             for (size_t j = 0; j < boids.size(); ++j)
             {
                 if (i != j)
-                { // Don't compare a boid with itself
+                {
                     boids[i].separation(boids[j], separation_factor, separation_radius);
                 }
             }
-            // boids[i].drag();
             boids[i].update_position();
+            boids[i].alignment(boids, alignment_factor, alignment_radius);
             draw_boid(ctx, boids[i]);
         }
     };

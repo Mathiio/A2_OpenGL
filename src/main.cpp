@@ -15,14 +15,14 @@ int main()
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
 
-    int               number            = 5;
+    int               number            = 100;
     float             radius            = 0.02f;
     float             separation_factor = 1.0f;
     float             separation_radius = 0.1f;
     float             alignment_factor  = 1.0f;
     float             alignment_radius  = 0.1f;
-    float             cohesion_factor  = 1.0f;
-    float             cohesion_radius  = 0.1f;
+    float             cohesion_factor   = 1.0f;
+    float             cohesion_radius   = 0.1f;
     std::vector<Boid> boids(number);
 
     // Actual application code

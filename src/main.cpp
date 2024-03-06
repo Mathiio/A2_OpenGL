@@ -49,15 +49,9 @@ int main()
         for (size_t i = 0; i < boids.size(); ++i)
         {
             boids[i].set_radius(radius);
-            for (size_t j = 0; j < boids.size(); ++j)
-            {
-                if (i != j)
-                {
-                    boids[i].separation(boids[j], separation_factor, separation_radius);
-                }
-            }
-            boids[i].update_position();
+            boids[i].separation(boids, separation_factor, separation_radius);
             boids[i].alignment(boids, alignment_factor, alignment_radius);
+            boids[i].update_position();
             draw_boid(ctx, boids[i]);
         }
     };

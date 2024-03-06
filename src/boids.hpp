@@ -95,4 +95,23 @@ public:
 
         velocity += average_direction * alignment_factor;
     }
+
+    void cohesion(std::vector<Boid>& boids, float cohesion_factor, float cohesion_radius)
+    {
+        std::vector<Boid> other_boids       = boids_in_area(boids, cohesion_radius);
+        glm::vec2         average_position  = {0, 0};
+
+        for (const Boid& other_boid : other_boids)
+        {
+            average_position += other_boid.position;
+        }
+
+        if (!other_boids.empty())
+        {
+            average_position /= other_boids.size();
+        }
+
+        glm::vec2 cohesion_force = (average_position - position) * cohesion_factor;
+        velocity += cohesion_force;
+    }
 };

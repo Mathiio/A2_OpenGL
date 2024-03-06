@@ -21,6 +21,8 @@ int main()
     float             separation_radius = 0.1f;
     float             alignment_factor  = 1.0f;
     float             alignment_radius  = 0.1f;
+    float             cohesion_factor  = 1.0f;
+    float             cohesion_radius  = 0.1f;
     std::vector<Boid> boids(number);
 
     // Actual application code
@@ -36,6 +38,8 @@ int main()
         ImGui::SliderFloat("Separation Radius", &separation_radius, 0.0f, 0.5f);
         ImGui::SliderFloat("Alignment Factor", &alignment_factor, 0.0f, 1.0f);
         ImGui::SliderFloat("Alignment Radius", &alignment_radius, 0.0f, 0.5f);
+        ImGui::SliderFloat("Cohesion Factor", &cohesion_factor, 0.0f, 1.0f);
+        ImGui::SliderFloat("Cohesion Radius", &cohesion_radius, 0.0f, 0.5f);
         ImGui::End();
     };
 
@@ -58,6 +62,7 @@ int main()
             }
             boids[i].update_position();
             boids[i].alignment(boids, alignment_factor, alignment_radius);
+            boids[i].cohesion(boids, cohesion_factor, cohesion_radius);
             draw_boid(ctx, boids[i]);
         }
     };

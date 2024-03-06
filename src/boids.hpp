@@ -46,23 +46,22 @@ public:
             velocity.x = velocity.x * maxSpeed / speed;
             velocity.y = velocity.y * maxSpeed / speed;
         }
-
-        // velocity += acceleration / 100.f;
         position += velocity / 100.f;
     }
 
-    //! Ne fonctionne pas
-    void drag()
+    std::vector<Boid> boids_in_area(std::vector<Boid>& boids, float radius)
     {
-        // Calculer l'amplitude de la vitesse
-        float amplitude = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-        // Calculer la direction de la vitesse
-        float directionX = (amplitude == 0) ? 0 : velocity.x / amplitude;
-        float directionY = (amplitude == 0) ? 0 : velocity.y / amplitude;
-        // Appliquer la décélération en fonction de la densité et de l'amplitude de la vitesse
-        float decelerationFactor = amplitude * amplitude; // * density;
-        velocity.x -= directionX * decelerationFactor;
-        velocity.y -= directionY * decelerationFactor;
+        std::vector<Boid> boids_in_area;
+        for (const Boid& boid : boids)
+        {
+            glm::vec2 delta    = boid.position - position;
+            float     distance = glm::length(delta);
+            if (distance < radius)
+            {
+                boids_in_area.push_back(boid);
+            }
+        }
+        return boids_in_area;
     }
 
     void separation(Boid& other, float separation_factor, float separation_radius)
@@ -74,8 +73,26 @@ public:
         if (distance < separation_radius)
         {
             separation_force = -delta * separation_factor / distance * distance;
-            // separation_force = -delta / distance * (distance / separation_factor);
         }
         velocity += separation_force;
+    }
+
+    void alignment(std::vector<Boid>& boids, float alignment_factor, float alignment_radius)
+    {
+        std::vector<Boid> other_boids       = boids_in_area(boids, alignment_radius);
+        glm::vec2         average_direction = {0, 0};
+
+        for (const Boid& other_boid : other_boids)
+        {
+            average_direction += glm::normalize(velocity) + glm::normalize(other_boid.velocity);
+        }
+
+        if (!other_boids.empty())
+        {
+            average_direction /= other_boids.size();
+            average_direction = glm::normalize(average_direction);
+        }
+
+        velocity += average_direction * alignment_factor;
     }
 };

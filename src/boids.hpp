@@ -64,17 +64,22 @@ public:
         return boids_in_area;
     }
 
-    void separation(Boid& other, float separation_factor, float separation_radius)
+    void separation(std::vector<Boid>& boids, float separation_factor, float separation_radius)
     {
-        glm::vec2 separation_force = {0, 0};
-        glm::vec2 delta            = other.position - position;
-        float     distance         = glm::length(delta);
+        std::vector<Boid> other_boids = boids_in_area(boids, separation_radius);
 
-        if (distance < separation_radius)
+        for (const Boid& other_boid : other_boids)
         {
-            separation_force = -delta * separation_factor / distance * distance;
+            if (other_boid.position != position)
+            {
+                glm::vec2 separation_force = {0, 0};
+                glm::vec2 delta            = other_boid.position - position;
+                float     distance         = glm::length(delta);
+
+                separation_force = -delta * separation_factor / distance * distance;
+                velocity += separation_force;
+            }
         }
-        velocity += separation_force;
     }
 
     void alignment(std::vector<Boid>& boids, float alignment_factor, float alignment_radius)

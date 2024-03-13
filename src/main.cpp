@@ -50,14 +50,14 @@ int main()
 
         boids.resize(number);
 
-        for (size_t i = 0; i < boids.size(); ++i)
+        for (Boid& boid : boids)
         {
-            boids[i].set_radius(radius);
-            boids[i].separation(boids, separation_factor, separation_radius);
-            boids[i].alignment(boids, alignment_factor, alignment_radius);
-            boids[i].cohesion(boids, cohesion_factor, cohesion_radius);
-            boids[i].update_position();
-            draw_boid(ctx, boids[i]);
+            boid.set_radius(radius);
+            boid.separation(boids, separation_factor, separation_radius);
+            boid.alignment(boids, alignment_factor, alignment_radius);
+            boid.cohesion(boids, cohesion_factor, cohesion_radius);
+            boid.update_position();
+            draw_boid(ctx, boid);
         }
     };
 

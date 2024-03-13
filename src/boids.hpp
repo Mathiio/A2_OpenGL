@@ -4,20 +4,20 @@
 
 class Boid {
 private:
-    glm::vec2 position;
-    glm::vec2 velocity;
-    glm::vec2 acceleration;
+    glm::vec3 position;
+    glm::vec3 velocity;
+    glm::vec3 acceleration;
     float     radius;
 
 public:
     Boid()
-        : position({p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f), p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f)})
-        , velocity({p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f)})
-        , acceleration({p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f)})
+        : position({p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f), p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f), p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f)})
+        , velocity({p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f)})
+        , acceleration({p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f)})
         , radius(0.02f) {}
 
-    Boid(const glm::vec2& init_position, const glm::vec2& init_velocity)
-        : position(init_position), velocity(init_velocity), acceleration(1.0f, 1.0f), radius(0.02f) {}
+    Boid(const glm::vec3& init_position, const glm::vec3& init_velocity)
+        : position(init_position), velocity(init_velocity), acceleration(1.0f, 1.0f, 1.0f), radius(0.02f) {}
 
     glm::vec2 get_position() const { return position; }
     float     get_radius() const { return radius; }
@@ -37,14 +37,19 @@ public:
         {
             velocity.y *= -1;
         }
+        if (position.z < -0.75f + radius || position.z > 0.75f - radius)
+        {
+            velocity.z *= -1;
+        }
 
-        //! Pas terrible
+        //! ???
         float maxSpeed = 1.0f;
-        float speed    = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+        float speed    = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
         if (speed > maxSpeed)
         {
             velocity.x = velocity.x * maxSpeed / speed;
             velocity.y = velocity.y * maxSpeed / speed;
+            velocity.z = velocity.z * maxSpeed / speed;
         }
         position += velocity / 100.f;
     }
@@ -54,7 +59,7 @@ public:
         std::vector<Boid> boids_in_area;
         for (const Boid& boid : boids)
         {
-            glm::vec2 delta    = boid.position - position;
+            glm::vec3 delta    = boid.position - position;
             float     distance = glm::length(delta);
             if (distance < radius)
             {
@@ -72,8 +77,8 @@ public:
         {
             if (other_boid.position != position)
             {
-                glm::vec2 separation_force = {0, 0};
-                glm::vec2 delta            = other_boid.position - position;
+                glm::vec3 separation_force = {0, 0, 0};
+                glm::vec3 delta            = other_boid.position - position;
                 float     distance         = glm::length(delta);
 
                 separation_force = -delta * separation_factor / distance * distance;
@@ -85,7 +90,7 @@ public:
     void alignment(std::vector<Boid>& boids, float alignment_factor, float alignment_radius)
     {
         std::vector<Boid> other_boids       = boids_in_area(boids, alignment_radius);
-        glm::vec2         average_direction = {0, 0};
+        glm::vec3         average_direction = {0, 0, 0};
 
         for (const Boid& other_boid : other_boids)
         {
@@ -103,8 +108,8 @@ public:
 
     void cohesion(std::vector<Boid>& boids, float cohesion_factor, float cohesion_radius)
     {
-        std::vector<Boid> other_boids       = boids_in_area(boids, cohesion_radius);
-        glm::vec2         average_position  = {0, 0};
+        std::vector<Boid> other_boids      = boids_in_area(boids, cohesion_radius);
+        glm::vec3         average_position = {0, 0, 0};
 
         for (const Boid& other_boid : other_boids)
         {
@@ -116,7 +121,7 @@ public:
             average_position /= other_boids.size();
         }
 
-        glm::vec2 cohesion_force = (average_position - position) * cohesion_factor;
+        glm::vec3 cohesion_force = (average_position - position) * cohesion_factor;
         velocity += cohesion_force;
     }
 };

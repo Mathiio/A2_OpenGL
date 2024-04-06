@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include "glimac/common.hpp"
+#include "glm/fwd.hpp"
+#include "glm/geometric.hpp"
 #include "p6/p6.h"
 
 class Boid {
@@ -11,7 +14,7 @@ private:
 
 public:
     Boid()
-        : position({p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f), p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f), p6::random::number(-0.75f + 0.02f, 0.75f - 0.02f)})
+        : position({p6::random::number(-0.3f + 0.02f, 0.3f - 0.02f), p6::random::number(-0.3f + 0.02f, 0.3f - 0.02f), p6::random::number(-0.3f + 0.02f, 0.3f - 0.02f)})
         , velocity({p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f)})
         , acceleration({p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f), p6::random::number(-1.0f, 1.0f)})
         , radius(0.02f) {}
@@ -19,13 +22,40 @@ public:
     Boid(const glm::vec3& init_position, const glm::vec3& init_velocity)
         : position(init_position), velocity(init_velocity), acceleration(1.0f, 1.0f, 1.0f), radius(0.02f) {}
 
-    glm::vec2 get_position() const { return position; }
+    glm::vec3 get_position() const { return position; }
     float     get_radius() const { return radius; }
     void      set_radius(float new_radius) { radius = new_radius; }
-    // void               set_position(const std::vector<float>& new_pos) { position = new_pos; }
 
-    //  glm::vec2  get_velocity() const { return velocity; }
-    // void               set_velocity(const std::vector<float>& new_vel) { velocity = new_vel; }
+    void draw(p6::Context& ctx, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, std::vector<glimac::ShapeVertex> vertices_sphere) const
+    {
+        // Position
+        glm::vec3 spherePosition = glm::vec3(position.x, position.y, position.z);
+
+        glm::vec3 direction(velocity.x, velocity.y, velocity.z);
+        direction = glm::normalize(direction);
+        glm::vec3 directionOrthogonale(-direction.y, direction.x, 0.0f);
+        directionOrthogonale      = glm::normalize(directionOrthogonale);
+        glm::vec3 directionFinale = glm::cross(direction, directionOrthogonale);
+        directionFinale           = glm::normalize(directionFinale);
+
+        glm::mat4 rotationMatrix(
+            glm::vec4(directionFinale, 0.0f),
+            glm::vec4(direction, 0.0f),
+            glm::vec4(directionOrthogonale, 0.0f),
+            glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+        );
+
+        glm::mat4 MVMatrix = viewMatrix * glm::translate(glm::mat4{1.f}, spherePosition) * glm::scale(glm::mat4{1.f}, glm::vec3(0.015f)) * rotationMatrix;
+
+        // NormalMatrix
+        glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
+        glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+        glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices_sphere.size());
+    }
 
     void update_position()
     {

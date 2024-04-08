@@ -29,7 +29,7 @@ void Boid::update(float delta_time)
     position += velocity * delta_time;
 }
 
-void Boid::draw(p6::Context& ctx, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, std::vector<glimac::ShapeVertex> vertices_sphere) const
+void Boid::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, std::vector<glimac::ShapeVertex> vertices_sphere) const
 {
         glm::vec3 spherePosition = glm::vec3(position.x, position.y, position.z);
 

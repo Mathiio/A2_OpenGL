@@ -6,4 +6,5 @@
 class ContextManager {
 public:
     static void setup(p6::Context& ctx, Camera& camera);
+    static void check_keys(p6::Context& ctx);
 };

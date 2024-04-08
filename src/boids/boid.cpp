@@ -12,8 +12,7 @@ Boid::Boid(glm::vec3 position, glm::vec3 velocity, float radius)
     : position(position)
     , velocity(velocity)
     , radius(radius)
-{
-}
+{}
 
 Boid::Boid()
     : position(glm::vec3{

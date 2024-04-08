@@ -14,7 +14,7 @@
 
 
 #include "context/ContextManager.hpp"
-#include "helper/helper.hpp"
+
 
 #define GLFW_INCLUDE_NONE
 

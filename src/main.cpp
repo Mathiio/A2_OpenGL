@@ -4,20 +4,22 @@
 #include <vector>
 
 #define DOCTEST_CONFIG_IMPLEMENT
-#include "TrackballCamera.hpp"
+#include "camera.hpp"
 #include "boids.hpp"
 #include "doctest/doctest.h"
 #include "draw.hpp"
 #include "glimac/common.hpp"
-#include "glimac/default_shader.hpp"
 #include "glimac/sphere_vertices.hpp"
 #include "p6/p6.h"
+
+
+#include "context/ContextManager.hpp"
+#include "helper/helper.hpp"
 
 #define GLFW_INCLUDE_NONE
 
 int main()
 {
-    // Run the tests
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
 
@@ -30,32 +32,23 @@ int main()
     float             cohesion_factor   = 1.0f;
     float             cohesion_radius   = 0.1f;
     std::vector<Boid> boids(number);
-    TrackballCamera   camera;
 
-    // Actual application code
+
+
     auto ctx = p6::Context{{.title = "Boids"}};
     ctx.maximize_window();
+    Camera camera;
+    ContextManager::setup(ctx, camera);
+    Helper::setupImGui(ctx, number, radius, separation_factor, separation_radius, alignment_factor, alignment_radius, cohesion_factor, cohesion_radius);
+
 
     const p6::Shader shader = p6::load_shader(
         "shaders/3D.vs.glsl",
         "shaders/normals.fs.glsl"
     );
 
-    glEnable(GL_DEPTH_TEST);
 
-    ctx.imgui = [&]() {
-        // Show a simple window
-        ImGui::Begin("Controls");
-        ImGui::SliderInt("Number", &number, 0, 200);
-        ImGui::SliderFloat("Radius", &radius, 0.02f, 0.05f);
-        ImGui::SliderFloat("Separation Factor", &separation_factor, 0.0f, 1.0f);
-        ImGui::SliderFloat("Separation Radius", &separation_radius, 0.0f, 0.5f);
-        ImGui::SliderFloat("Alignment Factor", &alignment_factor, 0.0f, 1.0f);
-        ImGui::SliderFloat("Alignment Radius", &alignment_radius, 0.0f, 0.5f);
-        ImGui::SliderFloat("Cohesion Factor", &cohesion_factor, 0.0f, 1.0f);
-        ImGui::SliderFloat("Cohesion Radius", &cohesion_radius, 0.0f, 0.5f);
-        ImGui::End();
-    };
+    glEnable(GL_DEPTH_TEST);
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
@@ -87,7 +80,6 @@ int main()
 
     glVertexAttribPointer(vertex_attr_texCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords)));
 
-    // Unbind the VAO
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -97,7 +89,8 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    // Declare your infinite update loop.
+
+
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Black);
 
@@ -115,7 +108,6 @@ int main()
         for (Boid& boid : boids)
         {
             boid.draw(ctx, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, vertices_sphere);
-            // boid.set_radius(radius);
             boid.separation(boids, separation_factor, separation_radius);
             boid.alignment(boids, alignment_factor, alignment_radius);
             boid.cohesion(boids, cohesion_factor, cohesion_radius);
@@ -123,10 +115,7 @@ int main()
             // draw_boid(ctx, boid);
         }
     };
-
-    // Should be done last. It starts the infinite loop.
     ctx.start();
-
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
 }

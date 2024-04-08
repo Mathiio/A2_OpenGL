@@ -17,3 +17,10 @@ void ContextManager::setup(p6::Context& ctx, Camera& camera)
 
     glEnable(GL_DEPTH_TEST);
 }
+
+
+void ContextManager::check_keys(p6::Context& ctx) {
+    if (ctx.key_is_pressed(GLFW_KEY_ESCAPE)) {
+        ctx.stop();
+    }
+}

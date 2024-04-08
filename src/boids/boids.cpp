@@ -23,11 +23,11 @@ void Boids::update(float delta_time)
             if (&boid != &otherBoid)
             {
                 // Distance entre deux boids
-                glm::vec3 boids_delta = boid.getPosition() - otherBoid.getPosition();
+                const glm::vec3 boids_delta = boid.getPosition() - otherBoid.getPosition();
 
                 if (std::fabs(boids_delta.x) < visualRange && std::fabs(boids_delta.y) < visualRange && std::fabs(boids_delta.z) < visualRange)
                 {
-                    float boids_distance = glm::length(boids_delta);
+                    const float boids_distance = glm::length(boids_delta);
 
                     if (boids_distance < protectedRange)
                     {
@@ -80,7 +80,7 @@ void Boids::update(float delta_time)
 
         boid.setVelocity(boid.getVelocity() + velocityChange);
 
-        float speed = glm::length(boid.getVelocity());
+        const float speed = glm::length(boid.getVelocity());
 
         // Appliquer vitesses min et max
         boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed : 1.0f));
@@ -89,11 +89,11 @@ void Boids::update(float delta_time)
     }
 }
 
-void Boids::draw(p6::Context& ctx, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, std::vector<glimac::ShapeVertex> vertices_sphere) const
+void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, std::vector<glimac::ShapeVertex> vertices_sphere) const
 {
     for (auto const& boid : boids)
     {
-        boid.draw(ctx, uMVPMatrixLocation,uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, vertices_sphere);
+        boid.draw(uMVPMatrixLocation,uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, vertices_sphere);
     }
 }
 
@@ -106,7 +106,7 @@ void Boids::addBoid(int number)
 
 void Boids::removeBoid(int number)
 {
-    if (boids.size() >= number)
+    if (static_cast<int>(boids.size()) >= number)
     {
         for (int i = 0; i < number; ++i) {
             boids.pop_back();
@@ -117,7 +117,7 @@ void Boids::removeBoid(int number)
 void Boids::helper()
 {
     ImGui::Begin("Controls");
-    ImGui::Text("Number of boids %d", boids.size());
+    ImGui::Text("Number of boids %zu", boids.size());
     ImGui::SliderFloat("Turn factor", &turnFactor, .001f, .5f);
     ImGui::SliderFloat("Visual range", &visualRange, .001f, .5f);
     ImGui::SliderFloat("Protected range", &protectedRange, .001f, .5f);
@@ -129,9 +129,9 @@ void Boids::helper()
     ImGui::InputInt("Number of boids wanted", &numBoids);
     if (ImGui::Button("Apply"))
     {
-        if (numBoids != boids.size())
+        if (numBoids != static_cast<int>(boids.size()))
         {
-            if (numBoids > boids.size())
+            if (numBoids > static_cast<int>(boids.size()))
             {
                 addBoid(numBoids - boids.size()); 
             }

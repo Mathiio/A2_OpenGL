@@ -34,8 +34,6 @@ int main()
         "shaders/normals.fs.glsl"
     );
 
-    glEnable(GL_DEPTH_TEST);
-
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);

@@ -4,17 +4,13 @@
 #include <vector>
 
 #define DOCTEST_CONFIG_IMPLEMENT
-#include "camera.hpp"
 #include "boids/boids.hpp"
+#include "camera.hpp"
+#include "context/ContextManager.hpp"
 #include "doctest/doctest.h"
 #include "glimac/common.hpp"
 #include "glimac/sphere_vertices.hpp"
-#include "context/ContextManager.hpp"
-
-
-
-#include "context/ContextManager.hpp"
-
+#include "meshs/mesh.hpp"
 
 #define GLFW_INCLUDE_NONE
 
@@ -22,7 +18,6 @@ int main()
 {
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
-
 
     auto ctx = p6::Context{{.title = "Boids"}};
     ctx.maximize_window();
@@ -34,12 +29,10 @@ int main()
         boids.helper();
     };
 
-
     const p6::Shader shader = p6::load_shader(
         "shaders/3D.vs.glsl",
         "shaders/normals.fs.glsl"
     );
-
 
     glEnable(GL_DEPTH_TEST);
 
@@ -76,7 +69,11 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
+    Mesh cube;
+    cube.loadModel("cube.obj");
 
+    cube.setVbo();
+    cube.setVao();
 
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Black);
@@ -92,6 +89,8 @@ int main()
 
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, vertices_sphere);
         boids.update(ctx.delta_time());
+
+        cube.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation);
     };
     ctx.start();
     glDeleteVertexArrays(1, &vao);

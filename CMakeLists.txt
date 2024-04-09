@@ -49,5 +49,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(p6)
 target_link_libraries(${PROJECT_NAME} PRIVATE p6::p6)
 
+# ---Add tinyobjloader library---
+add_subdirectory(tinyobjloader)
+target_link_libraries(${PROJECT_NAME} PRIVATE tinyobjloader)
+
 Cool__target_copy_folder(${PROJECT_NAME} assets)
 Cool__target_copy_folder(${PROJECT_NAME} src/shaders shaders)

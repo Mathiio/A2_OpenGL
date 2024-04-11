@@ -9,7 +9,6 @@
 #include "context/ContextManager.hpp"
 #include "doctest/doctest.h"
 #include "glimac/common.hpp"
-#include "glimac/sphere_vertices.hpp"
 #include "meshs/mesh.hpp"
 
 #define GLFW_INCLUDE_NONE
@@ -29,16 +28,14 @@ int main()
         boids.helper();
     };
 
-    const p6::Shader shader = p6::load_shader(
+    const p6::Shader shaderTexture = p6::load_shader(
         "shaders/3D.vs.glsl",
-        "shaders/normals.fs.glsl"
+        "shaders/texture.fs.glsl"
     );
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    const std::vector<glimac::ShapeVertex> vertices_sphere = glimac::sphere_vertices(1.f, 32, 16);
-    glBufferData(GL_ARRAY_BUFFER, vertices_sphere.size() * sizeof(glimac::ShapeVertex), vertices_sphere.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     GLuint vao;
@@ -61,36 +58,68 @@ int main()
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    GLuint uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
-    GLuint uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
-    GLuint uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
+    GLuint uMVPMatrixLocation    = glGetUniformLocation(shaderTexture.id(), "uMVPMatrix");
+    GLuint uMVMatrixLocation     = glGetUniformLocation(shaderTexture.id(), "uMVMatrix");
+    GLuint uNormalMatrixLocation = glGetUniformLocation(shaderTexture.id(), "uNormalMatrix");
+    // GLuint uText                 = glGetUniformLocation(shaderTexture.id(), "uText");
 
     glEnable(GL_DEPTH_TEST);
 
-    Mesh cube;
-    cube.loadModel("cube.obj");
+    Mesh decor;
+    decor.loadModel("decor.obj");
+    img::Image decorText = p6::load_image_buffer("assets/textures/test.jpg");
 
-    cube.setVbo();
-    cube.setVao();
+    Mesh boid;
+    boid.loadModel("bee.obj");
+    img::Image beeText = p6::load_image_buffer("assets/textures/bee.png");
+
+    GLuint beeBake;
+    glGenTextures(1, &beeBake);
+    glBindTexture(GL_TEXTURE_2D, beeBake);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, beeText.width(), beeText.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, beeText.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    GLuint decorBake;
+    glGenTextures(1, &decorBake);
+    glBindTexture(GL_TEXTURE_2D, decorBake);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decorText.width(), decorText.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, decorText.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    decor.setVbo();
+    decor.setVao();
+
+    boid.setVbo();
+    boid.setVao();
+
+    shaderTexture.use();
 
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::Black);
+        ctx.background({0.07f, 0.09f, 0.0f});
+        // ctx.background(p6::NamedColor::Black);
         ContextManager::check_keys(ctx);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindVertexArray(vao);
 
-        shader.use();
-
         glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 viewMatrix = camera.getViewMatrix();
 
-        boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, vertices_sphere);
-        boids.update(ctx.delta_time());
+        decor.draw(glm::vec3(0., -1., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake);
 
-        cube.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation);
+        shaderTexture.use();
+        boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
+        boids.update(ctx.delta_time());
     };
     ctx.start();
+
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
+
+    // boid.~Mesh();
 }

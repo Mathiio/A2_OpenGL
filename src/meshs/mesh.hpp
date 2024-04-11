@@ -23,10 +23,10 @@ public:
         glDeleteVertexArrays(1, &m_vao);
     };
 
-    void drawArray();
+    void drawArray(GLuint textName);
     void setRotation(float angle);
 
-    void draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation);
+    void draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName);
 
     void setVao();
 

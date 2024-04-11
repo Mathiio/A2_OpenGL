@@ -9,10 +9,14 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
-void Mesh::drawArray()
+void Mesh::drawArray(GLuint textName)
 {
     glBindVertexArray(m_vao);
-    // glBindTexture(GL_TEXTURE_2D, textName);
+
+    if (textName != 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, textName);
+    }
     // if(m_isIbo){
     //     glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT,0);
     // }
@@ -21,7 +25,7 @@ void Mesh::drawArray()
     // }
 }
 
-void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation)
+void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName)
 {
     glm::mat4 ViewMatrixModel = glm::translate(glm::mat4(1.0), pos);
     ViewMatrixModel           = glm::scale(ViewMatrixModel, scale);
@@ -33,7 +37,7 @@ void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 
     // glUniformMatrix4fv("uMVMatrix", 1, GL_FALSE, glm::value_ptr(ViewMatrixModel));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-    drawArray();
+    drawArray(textName);
 }
 
 void Mesh::setVbo()
@@ -111,7 +115,7 @@ const int* Mesh::getIndexPointer() const
 void Mesh::loadModel(const std::string& fileName)
 {
     // Load 3D object
-    std::string                      inputfile = "../meshs/" + fileName;
+    std::string                      inputfile = "../assets/models/" + fileName;
     tinyobj::attrib_t                attrib;
     std::vector<tinyobj::shape_t>    shapes;
     std::vector<tinyobj::material_t> materials;

@@ -1,7 +1,7 @@
 #include "boids/boids.hpp"
-#include "glm/fwd.hpp"
 #include <cmath>
-
+#include <ostream>
+#include "glm/fwd.hpp"
 
 Boids::Boids(int nbBoids)
     : boids(nbBoids), numBoids(nbBoids)
@@ -12,10 +12,10 @@ void Boids::update(float delta_time)
 {
     for (auto& boid : boids)
     {
-        // Reset moyennes 
-        glm::vec3 posAvg           = {0, 0, 0};
-        glm::vec3 velAvg           = {0, 0, 0};
-        glm::vec3 closeD           = {0, 0, 0};
+        // Reset moyennes
+        glm::vec3 posAvg        = {0, 0, 0};
+        glm::vec3 velAvg        = {0, 0, 0};
+        glm::vec3 closeD        = {0, 0, 0};
         int       boids_in_area = 0;
 
         for (auto const& otherBoid : boids)
@@ -47,7 +47,7 @@ void Boids::update(float delta_time)
         }
 
         glm::vec3 alignementForce = {0, 0, 0};
-        glm::vec3 cohesionForce  = {0, 0, 0};
+        glm::vec3 cohesionForce   = {0, 0, 0};
         glm::vec3 separationForce = {0, 0, 0};
 
         if (boids_in_area > 0)
@@ -67,39 +67,42 @@ void Boids::update(float delta_time)
 
         boid.setVelocity(boid.getVelocity() + separationForce + alignementForce + cohesionForce);
 
-
         const glm::vec3& pos = boid.getPosition();
 
         // Nouvelle vélocité si boids trop proche des bords sur x,y,z
         glm::vec3 velocityChange = glm::vec3(0.0f);
 
         // Update nouvelle vélocité si boids trop proche des bords sur x,y,z et changer vélocité
-        velocityChange.x += (pos.x < -0.8f) ? turnFactor : (pos.x > 0.8f) ? -turnFactor : 0.0f;
-        velocityChange.y += (pos.y < -0.8f) ? turnFactor : (pos.y > 0.8f) ? -turnFactor : 0.0f;
-        velocityChange.z += (pos.z < -0.8f) ? turnFactor : (pos.z > 0.8f) ? -turnFactor : 0.0f;
+        velocityChange.x += (pos.x < -0.8f) ? turnFactor : (pos.x > 0.8f) ? -turnFactor
+                                                                          : 0.0f;
+        velocityChange.y += (pos.y < -0.8f) ? turnFactor : (pos.y > 0.8f) ? -turnFactor
+                                                                          : 0.0f;
+        velocityChange.z += (pos.z < -0.8f) ? turnFactor : (pos.z > 0.8f) ? -turnFactor
+                                                                          : 0.0f;
 
         boid.setVelocity(boid.getVelocity() + velocityChange);
 
         const float speed = glm::length(boid.getVelocity());
 
         // Appliquer vitesses min et max
-        boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed : 1.0f));
-
+        boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed
+                                                                                                          : 1.0f));
         boid.update(delta_time);
     }
 }
 
-void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, std::vector<glimac::ShapeVertex> vertices_sphere) const
+void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint testName) const
 {
     for (auto const& boid : boids)
     {
-        boid.draw(uMVPMatrixLocation,uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, vertices_sphere);
+        boid.drawMesh(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, mesh, testName);
     }
 }
 
 void Boids::addBoid(int number)
 {
-    for (int i = 0; i < number; ++i) {
+    for (int i = 0; i < number; ++i)
+    {
         boids.emplace_back();
     }
 }
@@ -108,7 +111,8 @@ void Boids::removeBoid(int number)
 {
     if (static_cast<int>(boids.size()) >= number)
     {
-        for (int i = 0; i < number; ++i) {
+        for (int i = 0; i < number; ++i)
+        {
             boids.pop_back();
         }
     }
@@ -131,9 +135,14 @@ void Boids::helper()
     {
         if (numBoids != static_cast<int>(boids.size()))
         {
+            if (numBoids > 25)
+            {
+                numBoids = 25;
+            }
+
             if (numBoids > static_cast<int>(boids.size()))
             {
-                addBoid(numBoids - boids.size()); 
+                addBoid(numBoids - boids.size());
             }
             else
             {

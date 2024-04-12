@@ -5,6 +5,7 @@
 #include "boids/boid.hpp"
 #include "glimac/common.hpp"
 #include "glm/fwd.hpp"
+#include "collision/collision.hpp"
 
 class Boids {
 public:
@@ -12,7 +13,7 @@ public:
 
     void addBoid(int number = 1);
     void removeBoid(int number = 1);
-    void update(float delta_time);
+    void update(float delta_time, const CollisionObjects& collisionObjects);
     void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const;
     void helper();
 
@@ -27,4 +28,5 @@ private:
     float             maxSpeed{.8f};
     float             minSpeed{.5f};
     int               numBoids;
+    std::vector<CollisionObject> avoideObjects;
 };

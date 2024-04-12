@@ -3,12 +3,13 @@
 #include <ostream>
 #include "glm/fwd.hpp"
 
+
 Boids::Boids(int nbBoids)
     : boids(nbBoids), numBoids(nbBoids)
 {
 }
 
-void Boids::update(float delta_time)
+void Boids::update(float delta_time, const CollisionObjects& collisionObjects)
 {
     for (auto& boid : boids)
     {
@@ -88,6 +89,14 @@ void Boids::update(float delta_time)
         boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed
                                                                                                           : 1.0f));
         boid.update(delta_time);
+
+        for (const auto& object : collisionObjects) 
+        {
+            if (object.isInCollisionRange(boid.getPosition()))
+            {
+                boid.avoidObject(object.getPosition(), object.getAvoidanceFactor());
+            }
+        }
     }
 }
 

@@ -10,6 +10,7 @@
 #include "doctest/doctest.h"
 #include "glimac/common.hpp"
 #include "meshs/mesh.hpp"
+#include "collision/collision.hpp"
 
 #define GLFW_INCLUDE_NONE
 
@@ -23,6 +24,17 @@ int main()
     Camera camera;
     ContextManager::setup(ctx, camera);
     Boids boids;
+    CollisionObjects collisionObjects;
+
+    glm::vec3 collisionObjectPos1(0.70f, -0.63f, 0.23f);
+    CollisionObject collisionObject1(collisionObjectPos1, 0.6f, 0.7f, 1.2f, 0.1f);
+    collisionObjects.addCollisionObject(collisionObject1);
+    glm::vec3 collisionObjectPos2(-0.71f, -0.60f, -1.15f);
+    CollisionObject collisionObject2(collisionObjectPos2, 0.56f, 0.46f, 0.58f, 0.1f);
+    collisionObjects.addCollisionObject(collisionObject2);
+    
+
+    
 
     ctx.imgui = [&]() {
         boids.helper();
@@ -131,7 +143,7 @@ int main()
         shaderTexture.use();
 
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
-        boids.update(ctx.delta_time());
+        boids.update(ctx.delta_time(), collisionObjects);
     };
     ctx.start();
 

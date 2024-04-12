@@ -67,7 +67,7 @@ int main()
 
     Mesh decor;
     decor.loadModel("decor.obj");
-    img::Image decorText = p6::load_image_buffer("assets/textures/test.jpg");
+    img::Image decorText = p6::load_image_buffer("assets/textures/decor.png");
 
     Mesh boid;
     boid.loadModel("bee.obj");

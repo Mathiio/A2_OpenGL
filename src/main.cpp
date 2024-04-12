@@ -30,7 +30,7 @@ int main()
 
     const p6::Shader shaderTexture = p6::load_shader(
         "shaders/3D.vs.glsl",
-        "shaders/texture.fs.glsl"
+        "shaders/directionalLight.fs.glsl"
     );
 
     GLuint vbo;
@@ -61,13 +61,19 @@ int main()
     GLuint uMVPMatrixLocation    = glGetUniformLocation(shaderTexture.id(), "uMVPMatrix");
     GLuint uMVMatrixLocation     = glGetUniformLocation(shaderTexture.id(), "uMVMatrix");
     GLuint uNormalMatrixLocation = glGetUniformLocation(shaderTexture.id(), "uNormalMatrix");
-    // GLuint uText                 = glGetUniformLocation(shaderTexture.id(), "uText");
+    GLuint uText                 = glGetUniformLocation(shaderTexture.id(), "uText");
+
+    GLuint uKdLocation             = glGetUniformLocation(shaderTexture.id(), "uKd");
+    GLuint uKsLocation             = glGetUniformLocation(shaderTexture.id(), "uKs");
+    GLuint uShininessLocation      = glGetUniformLocation(shaderTexture.id(), "uShininess");
+    GLuint uLightDirLocation       = glGetUniformLocation(shaderTexture.id(), "uLightDir_vs");
+    GLuint uLightIntensityLocation = glGetUniformLocation(shaderTexture.id(), "uLightIntensity");
 
     glEnable(GL_DEPTH_TEST);
 
     Mesh decor;
     decor.loadModel("decor.obj");
-    img::Image decorText = p6::load_image_buffer("assets/textures/decor.png");
+    img::Image decorText = p6::load_image_buffer("assets/textures/decor_bake.png");
 
     Mesh boid;
     boid.loadModel("bee.obj");
@@ -110,9 +116,20 @@ int main()
         glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 viewMatrix = camera.getViewMatrix();
 
-        decor.draw(glm::vec3(0., -1., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake);
+        glUniform3f(uKdLocation, 1.0, 0.9f, 0.65f); // Couleur diffuse (gris clair)
+        glUniform3f(uKsLocation, 1.0f, 1.0f, 1.0f); // Couleur spéculaire (blanc)
+        glUniform1f(uShininessLocation, 4.0f);      // Brilliance
+
+        glm::vec4 lightDir    = {-2.0f, 1.0f, -2.0f, 0.0f};
+        glm::vec3 lightDir_vs = glm::vec3(viewMatrix * lightDir);
+
+        glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière (vers le haut)
+        glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);
+
+        decor.draw(glm::vec3(0., -1.5f, 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake);
 
         shaderTexture.use();
+
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
         boids.update(ctx.delta_time());
     };

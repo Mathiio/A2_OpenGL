@@ -14,7 +14,7 @@ private:
 
 public:
     Camera()
-        : m_Distance(2.0f), m_AngleX(0.0f), m_AngleY(0.0f) {}
+        : m_Distance(2.0f), m_AngleX(0.0f), m_AngleY(180.0f) {}
 
     void moveFront(float delta)
     {

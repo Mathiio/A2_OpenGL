@@ -34,7 +34,7 @@ void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(ViewMatrixModel));
     setBuffers();
     glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * ViewMatrixModel));
-    // glUniformMatrix4fv("uMVMatrix", 1, GL_FALSE, glm::value_ptr(ViewMatrixModel));
+    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(ViewMatrixModel));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
     drawArray(textName);

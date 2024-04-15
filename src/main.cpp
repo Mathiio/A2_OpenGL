@@ -42,30 +42,6 @@ int main()
         "shaders/directionalLight.fs.glsl"
     );
 
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    static constexpr GLuint vertex_attr_position = 0;
-    glEnableVertexAttribArray(vertex_attr_position);
-    glVertexAttribPointer(vertex_attr_position, 3, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position)));
-
-    static constexpr GLuint vertex_attr_normal = 1;
-    glEnableVertexAttribArray(vertex_attr_normal);
-    glVertexAttribPointer(vertex_attr_normal, 3, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal)));
-
-    static constexpr GLuint vertex_attr_texCoords = 2;
-    glEnableVertexAttribArray(vertex_attr_texCoords);
-    glVertexAttribPointer(vertex_attr_texCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords)));
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     GLuint uMVPMatrixLocation    = glGetUniformLocation(shaderTexture.id(), "uMVPMatrix");
     GLuint uMVMatrixLocation     = glGetUniformLocation(shaderTexture.id(), "uMVMatrix");
@@ -80,34 +56,28 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
+
     Mesh decor;
     decor.loadModel("decor.obj");
     GLuint decorBake = Texture::instance().loadTexture("assets/textures/decor.png");
+    decor.setBuffers();
 
     Mesh boid;
     boid.loadModel("bee.obj");
     GLuint beeBake = Texture::instance().loadTexture("assets/textures/bee.png");
+    boid.setBuffers();
 
     Mesh cloud1;
     cloud1.loadModel("cloud1.obj");
     GLuint cloud1Bake = Texture::instance().loadTexture("assets/textures/cloud1.png");
+    cloud1.setBuffers();
 
     Mesh cloud2;
     cloud2.loadModel("cloud2.obj");
     GLuint cloud2Bake = Texture::instance().loadTexture("assets/textures/cloud2.png");
+    cloud2.setBuffers();
 
 
-    decor.setVbo();
-    decor.setVao();
-
-    boid.setVbo();
-    boid.setVao();
-
-    cloud1.setVbo();
-    cloud1.setVao();
-
-    cloud2.setVbo();
-    cloud2.setVao();
 
     shaderTexture.use();
 
@@ -116,7 +86,6 @@ int main()
         ContextManager::check_keys(ctx);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBindVertexArray(vao);
 
         glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 viewMatrix = camera.getViewMatrix();
@@ -139,7 +108,4 @@ int main()
         boids.update(ctx.delta_time(), obstacles);
     };
     ctx.start();
-
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
 }

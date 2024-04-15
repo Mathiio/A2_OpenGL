@@ -8,7 +8,6 @@ class Mesh {
 protected:
     GLuint m_vbo;
     GLuint m_vao;
-    // rendering::Texture m_texture;
     std::vector<glimac::ShapeVertex> m_vertices;
     std::vector<int>                 m_index;
     GLsizei                          m_vertexCount;

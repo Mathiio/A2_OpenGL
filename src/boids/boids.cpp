@@ -9,7 +9,7 @@ Boids::Boids(int nbBoids)
 {
 }
 
-void Boids::update(float delta_time, const CollisionObjects& collisionObjects)
+void Boids::update(float delta_time, const Obstacles& obstacles)
 {
     for (auto& boid : boids)
     {
@@ -74,29 +74,18 @@ void Boids::update(float delta_time, const CollisionObjects& collisionObjects)
         glm::vec3 velocityChange = glm::vec3(0.0f);
 
         // Update nouvelle vélocité si boids trop proche des bords sur x,y,z et changer vélocité
-        velocityChange.x += (pos.x < -0.8f) ? turnFactor : (pos.x > 0.8f) ? -turnFactor
-                                                                          : 0.0f;
-        velocityChange.y += (pos.y < -0.8f) ? turnFactor : (pos.y > 0.8f) ? -turnFactor
-                                                                          : 0.0f;
-        velocityChange.z += (pos.z < -0.8f) ? turnFactor : (pos.z > 0.8f) ? -turnFactor
-                                                                          : 0.0f;
+        velocityChange.x += (pos.x < -0.8f) ? turnFactor : (pos.x > 0.8f) ? -turnFactor : 0.0f;
+        velocityChange.y += (pos.y < -0.8f) ? turnFactor : (pos.y > 0.8f) ? -turnFactor : 0.0f;
+        velocityChange.z += (pos.z < -0.8f) ? turnFactor : (pos.z > 0.8f) ? -turnFactor : 0.0f;
+
+        velocityChange = obstacles.updateCollision(pos, velocityChange, turnFactor);
 
         boid.setVelocity(boid.getVelocity() + velocityChange);
 
         const float speed = glm::length(boid.getVelocity());
 
-        // Appliquer vitesses min et max
-        boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed
-                                                                                                          : 1.0f));
+        boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed : 1.0f));
         boid.update(delta_time);
-
-        for (const auto& object : collisionObjects) 
-        {
-            if (object.isInCollisionRange(boid.getPosition()))
-            {
-                boid.avoidObject(object.getPosition(), object.getAvoidanceFactor());
-            }
-        }
     }
 }
 

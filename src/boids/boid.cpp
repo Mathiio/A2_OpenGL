@@ -63,15 +63,3 @@ glm::vec3 Boid::getVelocity() const
 {
     return velocity;
 }
-
-void Boid::avoidObject(const glm::vec3& objectPosition, float avoidanceFactor)
-{
-    // Calculate avoidance direction
-    glm::vec3 avoidanceDirection = position - objectPosition;
-    
-    // Normalize avoidance direction
-    avoidanceDirection = glm::normalize(avoidanceDirection);
-    
-    // Apply avoidance force to the velocity
-    velocity += avoidanceDirection * avoidanceFactor;
-}

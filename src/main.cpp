@@ -12,6 +12,7 @@
 #include "meshs/mesh.hpp"
 #include "obstacles/obstacles.hpp"
 #include "textures/texture.hpp"
+#include <iostream>
 
 #define GLFW_INCLUDE_NONE
 
@@ -28,9 +29,9 @@ int main()
     Obstacles obstacles;
 
 
-    obstacles.addObstacle({{0.727f, -0.672f, -0.386f}, 0.544f, 0.65f, 1.30f});
-    obstacles.addObstacle({{-0.690f, -0.549f, -0.850f}, 0.62f, 0.5f, 0.66f});
-    obstacles.addObstacle({{-0.401f, -0.862f, -0.72f}, 0.31f, 0.27f, 0.74f});
+    obstacles.addObstacle({{0.727f, -0.386f, 0.672f}, 0.544f, 1.30f, 0.65f});
+    obstacles.addObstacle({{-0.690f, -0.850f, 0.549f}, 0.62f, 0.66f, 0.5f});
+    obstacles.addObstacle({{-0.401f, -0.72f, -0.862f}, 0.31f, 0.74f, 0.27f});
 
 
     ctx.imgui = [&]() {
@@ -53,7 +54,6 @@ int main()
     GLuint uShininessLocation      = glGetUniformLocation(shaderTexture.id(), "uShininess");
     GLuint uLightDirLocation       = glGetUniformLocation(shaderTexture.id(), "uLightDir_vs");
     GLuint uLightIntensityLocation = glGetUniformLocation(shaderTexture.id(), "uLightIntensity");
-
     glEnable(GL_DEPTH_TEST);
 
 
@@ -74,10 +74,12 @@ int main()
 
     Mesh cloud2;
     cloud2.loadModel("cloud2.obj");
+    glm::vec3 newPosCloud2 = {0,1,0};
+    // glm::vec3 newPosCloud2 = cloud2.randomPos();
+    // std::cout << newPosCloud2.x << ", " << newPosCloud2.y << ", " << newPosCloud2.z << std::endl;
     GLuint cloud2Bake = Texture::instance().loadTexture("assets/textures/cloud2.png");
     cloud2.setBuffers();
-
-
+    
 
     shaderTexture.use();
 
@@ -100,6 +102,7 @@ int main()
         glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière (vers le haut)
         glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);
 
+        cloud2.draw(newPosCloud2, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake);
         decor.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake);
 
         shaderTexture.use();

@@ -3,11 +3,13 @@
 #include <glimac/common.hpp>
 #include "glm/fwd.hpp"
 #include "p6/p6.h"
+#include "markov/markov.hpp"
 
 class Mesh {
 protected:
     GLuint m_vbo;
     GLuint m_vao;
+    glm::vec3 m_pos;
     std::vector<glimac::ShapeVertex> m_vertices;
     std::vector<int>                 m_index;
     GLsizei                          m_vertexCount;
@@ -32,6 +34,8 @@ public:
     void setVbo();
 
     void setBuffers();
+
+    glm::vec3 randomPos();
 
     std::vector<glimac::ShapeVertex> getData() const;
 

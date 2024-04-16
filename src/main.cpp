@@ -24,12 +24,12 @@ int main()
         return EXIT_FAILURE;
 
     auto ctx = p6::Context{{.title = "Bees"}};
-    ctx.maximize_window();
+
     Camera    camera;
     Character character;
     Boids     boids;
     Obstacles obstacles;
-    ContextManager::setup(ctx, camera, boids);
+    ContextManager::setup(ctx, boids);
 
     obstacles.addObstacle({{0.727f, -0.386f, 0.672f}, 0.544f, 1.30f, 0.65f});
     obstacles.addObstacle({{-0.690f, -0.850f, 0.549f}, 0.62f, 0.66f, 0.5f});
@@ -64,7 +64,6 @@ int main()
 
     Mesh      cloud2("cloud2.obj");
     glm::vec3 newPosCloud2 = randomPos();
-    std::cout << newPosCloud2.x << ", " << newPosCloud2.y << ", " << newPosCloud2.z << std::endl;
     GLuint cloud2Bake = Texture::instance().loadTexture("assets/textures/cloud2.png");
     cloud2.setBuffers();
 
@@ -88,8 +87,6 @@ int main()
         glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière
         glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);                      // Intensité de la lumière
 
-        shaderTexture.use();
-
         character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
         cloud2.draw(newPosCloud2, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake, 0.0f);
         decor.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake, 0.0f);
@@ -97,7 +94,6 @@ int main()
         boids.update(ctx.delta_time(), obstacles);
     };
     ctx.start();
-
     boid.~Mesh();
     decor.~Mesh();
     character.~Character();

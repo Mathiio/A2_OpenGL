@@ -6,15 +6,19 @@
 
 class Mesh {
 protected:
-    GLuint                           m_vbo;
-    GLuint                           m_vao;
+    GLuint m_vbo;
+    GLuint m_vao;
+    glm::vec3 m_pos;
     std::vector<glimac::ShapeVertex> m_vertices;
     std::vector<int>                 m_index;
     GLsizei                          m_vertexCount;
     float                            m_Rotation;
 
 public:
-    Mesh() = default;
+    Mesh(const std::string& fileName)
+    {
+        loadModel(fileName); 
+    }
 
     ~Mesh()
     {

@@ -2,8 +2,13 @@
 #include "GLFW/glfw3.h"
 #include "camera.hpp"
 
-void ContextManager::setup(p6::Context& ctx, Camera& camera)
+void ContextManager::setup(p6::Context& ctx, Camera& camera, Boids& boids)
 {
+    ctx.imgui = [&]() {
+        boids.helper();
+    };
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void ContextManager::check_keys(p6::Context& ctx, Camera& camera, Character& character)

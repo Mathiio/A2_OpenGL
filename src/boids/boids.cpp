@@ -3,12 +3,13 @@
 #include <ostream>
 #include "glm/fwd.hpp"
 
+
 Boids::Boids(int nbBoids)
     : boids(nbBoids), numBoids(nbBoids)
 {
 }
 
-void Boids::update(float delta_time)
+void Boids::update(float delta_time, const Obstacles& obstacles)
 {
     for (auto& boid : boids)
     {
@@ -73,20 +74,17 @@ void Boids::update(float delta_time)
         glm::vec3 velocityChange = glm::vec3(0.0f);
 
         // Update nouvelle vélocité si boids trop proche des bords sur x,y,z et changer vélocité
-        velocityChange.x += (pos.x < -0.8f) ? turnFactor : (pos.x > 0.8f) ? -turnFactor
-                                                                          : 0.0f;
-        velocityChange.y += (pos.y < -0.8f) ? turnFactor : (pos.y > 0.8f) ? -turnFactor
-                                                                          : 0.0f;
-        velocityChange.z += (pos.z < -0.8f) ? turnFactor : (pos.z > 0.8f) ? -turnFactor
-                                                                          : 0.0f;
+        velocityChange.x += (pos.x < -0.8f) ? turnFactor : (pos.x > 0.8f) ? -turnFactor : 0.0f;
+        velocityChange.y += (pos.y < -0.8f) ? turnFactor : (pos.y > 0.8f) ? -turnFactor : 0.0f;
+        velocityChange.z += (pos.z < -0.8f) ? turnFactor : (pos.z > 0.8f) ? -turnFactor : 0.0f;
+
+        velocityChange = obstacles.updateCollision(pos, velocityChange, turnFactor);
 
         boid.setVelocity(boid.getVelocity() + velocityChange);
 
         const float speed = glm::length(boid.getVelocity());
 
-        // Appliquer vitesses min et max
-        boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed
-                                                                                                          : 1.0f));
+        boid.setVelocity(boid.getVelocity() * ((speed > maxSpeed) ? maxSpeed / speed : (speed < minSpeed) ? minSpeed / speed : 1.0f));
         boid.update(delta_time);
     }
 }

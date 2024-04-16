@@ -2,6 +2,7 @@
 #include <p6/p6.h>
 #include <glimac/common.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/random.hpp>
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
 #include "glm/matrix.hpp"
@@ -17,12 +18,7 @@ void Mesh::drawArray(GLuint textName)
     {
         glBindTexture(GL_TEXTURE_2D, textName);
     }
-    // if(m_isIbo){
-    //     glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT,0);
-    // }
-    // else{
     glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
-    // }
 }
 
 void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName, float angle)
@@ -58,25 +54,12 @@ void Mesh::setRotation(float angle)
     m_Rotation = glm::radians(angle);
 }
 
-// void Model::setIbo(){
-//     GLuint ibo;
-//     m_ibo = ibo;
-//     m_isIbo = true;
-//     glGenBuffers(1, &m_ibo);
-//     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-//     glBufferData(GL_ELEMENT_ARRAY_BUFFER, getVertexCount() * sizeof(int), getIndexPointer(), GL_STATIC_DRAW);
-//     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-// }
-
 void Mesh::setVao()
 {
     GLuint vao = 0;
     m_vao      = vao;
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
-    // if(m_isIbo){
-    //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-    // }
     const GLuint VERTEX_ATTR_POSITION  = 0;
     const GLuint VERTEX_ATTR_NORMAL    = 1;
     const GLuint VERTEX_ATTR_TEXCOORDS = 2;
@@ -94,7 +77,6 @@ void Mesh::setVao()
 void Mesh::setBuffers()
 {
     setVbo();
-    // setIbo();
     setVao();
 }
 
@@ -115,7 +97,6 @@ const int* Mesh::getIndexPointer() const
 
 void Mesh::loadModel(const std::string& fileName)
 {
-    // Load 3D object
     std::string                      inputfile = "assets/models/" + fileName;
     tinyobj::attrib_t                attrib;
     std::vector<tinyobj::shape_t>    shapes;
@@ -126,7 +107,7 @@ void Mesh::loadModel(const std::string& fileName)
     bool        ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str(), nullptr);
 
     if (!err.empty())
-    { // `err` may contain warning message.
+    { 
         std::cerr << err << std::endl;
     }
 
@@ -157,14 +138,12 @@ void Mesh::loadModel(const std::string& fileName)
                         tinyobj::real_t(attrib.vertices[3 * size_t(idx.vertex_index) + 1]),
                         tinyobj::real_t(attrib.vertices[3 * size_t(idx.vertex_index) + 2])
                     ),
-
                     // NORMAL
                     glm::vec3(
                         tinyobj::real_t(attrib.normals[3 * size_t(idx.normal_index) + 0]), // nx
                         tinyobj::real_t(attrib.normals[3 * size_t(idx.normal_index) + 1]), // ny
                         tinyobj::real_t(attrib.normals[3 * size_t(idx.normal_index) + 2])  // nz
                     ),
-
                     // TEXTURE_COORDINATES
                     glm::vec2(
                         tinyobj::real_t(attrib.texcoords[2 * size_t(idx.texcoord_index) + 0]), // tx

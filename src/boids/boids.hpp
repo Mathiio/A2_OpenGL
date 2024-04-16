@@ -9,7 +9,7 @@
 
 class Boids {
 public:
-    Boids(int nbBoids = 12);
+    Boids(int nbBoids = 10);
 
     void addBoid(int number = 1);
     void removeBoid(int number = 1);
@@ -25,7 +25,7 @@ private:
     float             alignementFactor{.001f};
     float             separationFactor{.9f};
     float             cohesionFactor{.02f};
-    float             maxSpeed{.8f};
-    float             minSpeed{.65f};
+    float             maxSpeed{.6f};
+    float             minSpeed{.4f};
     int               numBoids;
 };

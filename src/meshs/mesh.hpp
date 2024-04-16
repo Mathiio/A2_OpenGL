@@ -3,7 +3,6 @@
 #include <glimac/common.hpp>
 #include "glm/fwd.hpp"
 #include "p6/p6.h"
-#include "markov/markov.hpp"
 
 class Mesh {
 protected:
@@ -16,7 +15,10 @@ protected:
     float                            m_Rotation;
 
 public:
-    Mesh() = default;
+    Mesh(const std::string& fileName)
+    {
+        loadModel(fileName); 
+    }
 
     ~Mesh()
     {
@@ -34,8 +36,6 @@ public:
     void setVbo();
 
     void setBuffers();
-
-    glm::vec3 randomPos();
 
     std::vector<glimac::ShapeVertex> getData() const;
 

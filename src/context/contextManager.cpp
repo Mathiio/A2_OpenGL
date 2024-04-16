@@ -2,7 +2,7 @@
 
 
 
-void ContextManager::setup(p6::Context& ctx, Camera& camera)
+void ContextManager::setup(p6::Context& ctx, Camera& camera, Boids& boids)
 {
     ctx.mouse_dragged = [&](p6::MouseDrag) {
         glm::vec2 deltamouse = ctx.mouse_delta();
@@ -13,6 +13,10 @@ void ContextManager::setup(p6::Context& ctx, Camera& camera)
 
     ctx.mouse_scrolled = [&](p6::MouseScroll e) {
         camera.moveFront(-e.dy);
+    };
+
+    ctx.imgui = [&]() {
+        boids.helper();
     };
 
     glEnable(GL_DEPTH_TEST);

@@ -4,6 +4,7 @@
 #include <vector>
 
 #define DOCTEST_CONFIG_IMPLEMENT
+#include <iostream>
 #include "boids/boids.hpp"
 #include "camera.hpp"
 #include "character/character.hpp"
@@ -12,9 +13,8 @@
 #include "glimac/common.hpp"
 #include "meshs/mesh.hpp"
 #include "obstacles/obstacles.hpp"
-#include "textures/texture.hpp"
 #include "random/random.hpp"
-#include <iostream>
+#include "textures/texture.hpp"
 
 #define GLFW_INCLUDE_NONE
 
@@ -27,10 +27,9 @@ int main()
     ctx.maximize_window();
     Camera    camera;
     Character character;
-    Boids boids;
+    Boids     boids;
     Obstacles obstacles;
     ContextManager::setup(ctx, camera, boids);
-
 
     obstacles.addObstacle({{0.727f, -0.386f, 0.672f}, 0.544f, 1.30f, 0.65f});
     obstacles.addObstacle({{-0.690f, -0.850f, 0.549f}, 0.62f, 0.66f, 0.5f});
@@ -41,10 +40,9 @@ int main()
         "shaders/directionalLight.fs.glsl"
     );
 
-
-    GLuint uMVPMatrixLocation    = glGetUniformLocation(shaderTexture.id(), "uMVPMatrix");
-    GLuint uMVMatrixLocation     = glGetUniformLocation(shaderTexture.id(), "uMVMatrix");
-    GLuint uNormalMatrixLocation = glGetUniformLocation(shaderTexture.id(), "uNormalMatrix");
+    GLuint uMVPMatrixLocation      = glGetUniformLocation(shaderTexture.id(), "uMVPMatrix");
+    GLuint uMVMatrixLocation       = glGetUniformLocation(shaderTexture.id(), "uMVMatrix");
+    GLuint uNormalMatrixLocation   = glGetUniformLocation(shaderTexture.id(), "uNormalMatrix");
     GLuint uKdLocation             = glGetUniformLocation(shaderTexture.id(), "uKd");
     GLuint uKsLocation             = glGetUniformLocation(shaderTexture.id(), "uKs");
     GLuint uShininessLocation      = glGetUniformLocation(shaderTexture.id(), "uShininess");
@@ -52,27 +50,25 @@ int main()
     GLuint uLightIntensityLocation = glGetUniformLocation(shaderTexture.id(), "uLightIntensity");
     glEnable(GL_DEPTH_TEST);
 
-
-    Mesh decor("decor.obj");
+    Mesh   decor("decor.obj");
     GLuint decorBake = Texture::instance().loadTexture("assets/textures/decor.png");
     decor.setBuffers();
 
-    Mesh boid("bee.obj");
+    Mesh   boid("bee.obj");
     GLuint beeBake = Texture::instance().loadTexture("assets/textures/bee.png");
     boid.setBuffers();
 
-    Mesh cloud1("cloud1.obj");
+    Mesh   cloud1("cloud1.obj");
     GLuint cloud1Bake = Texture::instance().loadTexture("assets/textures/cloud1.png");
     cloud1.setBuffers();
 
-    Mesh cloud2("cloud2.obj");
+    Mesh      cloud2("cloud2.obj");
     glm::vec3 newPosCloud2 = randomPos();
     std::cout << newPosCloud2.x << ", " << newPosCloud2.y << ", " << newPosCloud2.z << std::endl;
     GLuint cloud2Bake = Texture::instance().loadTexture("assets/textures/cloud2.png");
     cloud2.setBuffers();
-    
-    shaderTexture.use();
 
+    shaderTexture.use();
 
     ctx.update = [&]() {
         ctx.background({0.06f, 0.08f, 0.0f});
@@ -92,13 +88,11 @@ int main()
         glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière
         glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);                      // Intensité de la lumière
 
-        decor.draw(glm::vec3(0., -1.5f, 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake, 0.0f);
-
         shaderTexture.use();
 
         character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
-        cloud2.draw(newPosCloud2, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake);
-        decor.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake);
+        cloud2.draw(newPosCloud2, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake, 0.0f);
+        decor.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake, 0.0f);
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
         boids.update(ctx.delta_time(), obstacles);
     };

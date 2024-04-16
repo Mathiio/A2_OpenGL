@@ -6,6 +6,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "boids/boids.hpp"
 #include "camera.hpp"
+#include "character/character.hpp"
 #include "context/ContextManager.hpp"
 #include "doctest/doctest.h"
 #include "glimac/common.hpp"
@@ -23,8 +24,9 @@ int main()
         return EXIT_FAILURE;
 
     auto ctx = p6::Context{{.title = "Bees"}};
-
-    Camera camera;
+    ctx.maximize_window();
+    Camera    camera;
+    Character character;
     Boids boids;
     Obstacles obstacles;
     ContextManager::setup(ctx, camera, boids);
@@ -73,28 +75,36 @@ int main()
 
 
     ctx.update = [&]() {
-        ctx.background({0.07f, 0.09f, 0.0f});
-        ContextManager::check_keys(ctx);
+        ctx.background({0.06f, 0.08f, 0.0f});
+        ContextManager::check_keys(ctx, camera, character);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 viewMatrix = camera.getViewMatrix();
 
-        glUniform3f(uKdLocation, 1.0, 0.9f, 0.65f); // Couleur diffuse (gris clair)
-        glUniform3f(uKsLocation, 1.0f, 1.0f, 1.0f); // Couleur spéculaire (blanc)
-        glUniform1f(uShininessLocation, 4.0f);      // Brilliance
-
         glm::vec4 lightDir    = {-2.0f, 1.0f, -2.0f, 0.0f};
         glm::vec3 lightDir_vs = glm::vec3(viewMatrix * lightDir);
 
-        glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière (vers le haut)
-        glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);
+        glUniform3f(uKdLocation, 1.0, 0.9f, 0.65f);                                  // Couleur diffuse
+        glUniform3f(uKsLocation, 1.0f, 1.0f, 1.0f);                                  // Couleur spéculaire
+        glUniform1f(uShininessLocation, 4.0f);                                       // Brilliance
+        glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière
+        glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);                      // Intensité de la lumière
 
+        decor.draw(glm::vec3(0., -1.5f, 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake, 0.0f);
+
+        shaderTexture.use();
+
+        character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
         cloud2.draw(newPosCloud2, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake);
         decor.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake);
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
         boids.update(ctx.delta_time(), obstacles);
     };
     ctx.start();
+
+    boid.~Mesh();
+    decor.~Mesh();
+    character.~Character();
 }

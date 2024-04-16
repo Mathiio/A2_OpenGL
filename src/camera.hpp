@@ -4,43 +4,82 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
+#include "character/character.hpp"
 
 class Camera {
 private:
-    float m_Distance;
-    float m_AngleX;
-    float m_AngleY;
+    glm::vec3 m_Position;
+    float     m_Phi;
+    float     m_Theta;
+
+    glm::vec3 m_FrontVector;
+    glm::vec3 m_LeftVector;
+    glm::vec3 m_UpVector;
+
+    // Private method to compute direction vectors
+    void computeDirectionVectors()
+    {
+        m_FrontVector.x = std::sin(m_Theta) * std::cos(m_Phi);
+        m_FrontVector.y = std::sin(m_Phi);
+        m_FrontVector.z = std::cos(m_Theta) * std::cos(m_Phi);
+        m_LeftVector    = glm::normalize(glm::cross(m_FrontVector, glm::vec3(0.0f, 1.0f, 0.0f)));
+        m_UpVector      = glm::normalize(glm::cross(m_LeftVector, m_FrontVector));
+    }
 
 public:
+    // Constructor
     Camera()
-        : m_Distance(2.0f), m_AngleX(0.0f), m_AngleY(180.0f) {}
-
-    void moveFront(float delta)
+        : m_Position(0.0f, 0.0f, -2.0f), m_Phi(glm::pi<float>()), m_Theta(glm::radians(180.0f)), m_FrontVector(0.0f, 0.0f, -1.0f), m_LeftVector(-1.0f, 0.0f, 0.0f), m_UpVector(0.0f, 1.0f, 0.0f)
     {
-        m_Distance += delta;
+        computeDirectionVectors();
     }
 
+    // Move along left vector
+    void moveLeft(float t) { m_Position -= t * m_LeftVector; }
+
+    // Move along front vector
+    void moveFront(float t) { m_Position -= t * m_FrontVector; }
+
+    // Rotate left
     void rotateLeft(float degrees)
     {
-        m_AngleY += degrees;
+        float radians = glm::radians(degrees);
+        m_Theta += radians;
+        computeDirectionVectors();
     }
 
+    // Rotate up
     void rotateUp(float degrees)
     {
-        m_AngleX += degrees;
+        float radians = glm::radians(degrees);
+        m_Phi += radians;
+        computeDirectionVectors();
     }
 
-    glm::mat4 getViewMatrix() const
+    // Get view matrix
+    glm::mat4 getViewMatrix() const { return glm::lookAt(m_Position, m_Position + m_FrontVector, m_UpVector); }
+    glm::vec3 getPosition() const { return m_Position; }
+
+    float getTheta() const { return m_Theta; }
+    float getPhi() const { return m_Phi; }
+
+    void moveCharacter(Character& character, float direction)
     {
-        float angleX_rad = glm::radians(m_AngleX);
-        float angleY_rad = glm::radians(m_AngleY);
+        glm::vec3 newPosition = character.getPosition() + direction * m_FrontVector;
+        character.setPosition(newPosition);
+    }
 
-        glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -m_Distance));
-        glm::mat4 rotationX   = glm::rotate(glm::mat4(1.0f), angleX_rad, glm::vec3(1.0f, 0.0f, 0.0f));
-        glm::mat4 rotationY   = glm::rotate(glm::mat4(1.0f), angleY_rad, glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 viewMatrix  = translation * rotationX * rotationY;
+    void rotateCharacter(Character& character, float orientation)
+    {
+        character.setRotation(glm::degrees(m_Theta));
 
-        return viewMatrix;
+        glm::mat4 rotationMatrix      = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f * orientation), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 translateToOrigin   = glm::translate(glm::mat4(1.0f), -m_Position);
+        glm::mat4 translateFromOrigin = glm::translate(glm::mat4(1.0f), m_Position);
+        glm::mat4 finalTransform      = translateFromOrigin * rotationMatrix * translateToOrigin;
+
+        glm::vec4 transformedPoint  = finalTransform * glm::vec4(character.getPosition(), 1.0f);
+        glm::vec3 transformedCoords = glm::vec3(transformedPoint);
+        character.setPosition(transformedCoords);
     }
 };

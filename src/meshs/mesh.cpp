@@ -21,9 +21,12 @@ void Mesh::drawArray(GLuint textName)
     glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
 }
 
-void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName)
+void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName, float angle)
 {
+    setRotation(angle);
+
     glm::mat4 ViewMatrixModel = glm::translate(glm::mat4(1.0), pos);
+    ViewMatrixModel           = glm::rotate(ViewMatrixModel, m_Rotation, glm::vec3(0.0f, 1.0f, 0.0f));
     ViewMatrixModel           = glm::scale(ViewMatrixModel, scale);
     ViewMatrixModel           = viewMatrix * ViewMatrixModel;
 
@@ -48,9 +51,7 @@ void Mesh::setVbo()
 
 void Mesh::setRotation(float angle)
 {
-    angle = glm::mod(angle, glm::two_pi<float>());
-
-    m_Rotation = angle;
+    m_Rotation = glm::radians(angle);
 }
 
 void Mesh::setVao()

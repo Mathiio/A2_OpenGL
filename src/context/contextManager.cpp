@@ -2,7 +2,7 @@
 #include "GLFW/glfw3.h"
 #include "camera.hpp"
 
-void ContextManager::setup(p6::Context& ctx, Camera& camera, Boids& boids)
+void ContextManager::setup(p6::Context& ctx, Boids& boids)
 {
     ctx.imgui = [&]() {
         boids.helper();

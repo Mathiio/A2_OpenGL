@@ -12,6 +12,7 @@
 #include "meshs/mesh.hpp"
 #include "obstacles/obstacles.hpp"
 #include "textures/texture.hpp"
+#include "random/random.hpp"
 #include <iostream>
 
 #define GLFW_INCLUDE_NONE
@@ -21,22 +22,17 @@ int main()
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
 
-    auto ctx = p6::Context{{.title = "Boids"}};
+    auto ctx = p6::Context{{.title = "Bees"}};
 
     Camera camera;
-    ContextManager::setup(ctx, camera);
     Boids boids;
     Obstacles obstacles;
+    ContextManager::setup(ctx, camera, boids);
 
 
     obstacles.addObstacle({{0.727f, -0.386f, 0.672f}, 0.544f, 1.30f, 0.65f});
     obstacles.addObstacle({{-0.690f, -0.850f, 0.549f}, 0.62f, 0.66f, 0.5f});
     obstacles.addObstacle({{-0.401f, -0.72f, -0.862f}, 0.31f, 0.74f, 0.27f});
-
-
-    ctx.imgui = [&]() {
-        boids.helper();
-    };
 
     const p6::Shader shaderTexture = p6::load_shader(
         "shaders/3D.vs.glsl",
@@ -47,8 +43,6 @@ int main()
     GLuint uMVPMatrixLocation    = glGetUniformLocation(shaderTexture.id(), "uMVPMatrix");
     GLuint uMVMatrixLocation     = glGetUniformLocation(shaderTexture.id(), "uMVMatrix");
     GLuint uNormalMatrixLocation = glGetUniformLocation(shaderTexture.id(), "uNormalMatrix");
-    GLuint uText                 = glGetUniformLocation(shaderTexture.id(), "uText");
-
     GLuint uKdLocation             = glGetUniformLocation(shaderTexture.id(), "uKd");
     GLuint uKsLocation             = glGetUniformLocation(shaderTexture.id(), "uKs");
     GLuint uShininessLocation      = glGetUniformLocation(shaderTexture.id(), "uShininess");
@@ -57,31 +51,26 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
 
-    Mesh decor;
-    decor.loadModel("decor.obj");
+    Mesh decor("decor.obj");
     GLuint decorBake = Texture::instance().loadTexture("assets/textures/decor.png");
     decor.setBuffers();
 
-    Mesh boid;
-    boid.loadModel("bee.obj");
+    Mesh boid("bee.obj");
     GLuint beeBake = Texture::instance().loadTexture("assets/textures/bee.png");
     boid.setBuffers();
 
-    Mesh cloud1;
-    cloud1.loadModel("cloud1.obj");
+    Mesh cloud1("cloud1.obj");
     GLuint cloud1Bake = Texture::instance().loadTexture("assets/textures/cloud1.png");
     cloud1.setBuffers();
 
-    Mesh cloud2;
-    cloud2.loadModel("cloud2.obj");
-    glm::vec3 newPosCloud2 = {0,1,0};
-    // glm::vec3 newPosCloud2 = cloud2.randomPos();
-    // std::cout << newPosCloud2.x << ", " << newPosCloud2.y << ", " << newPosCloud2.z << std::endl;
+    Mesh cloud2("cloud2.obj");
+    glm::vec3 newPosCloud2 = randomPos();
+    std::cout << newPosCloud2.x << ", " << newPosCloud2.y << ", " << newPosCloud2.z << std::endl;
     GLuint cloud2Bake = Texture::instance().loadTexture("assets/textures/cloud2.png");
     cloud2.setBuffers();
     
-
     shaderTexture.use();
+
 
     ctx.update = [&]() {
         ctx.background({0.07f, 0.09f, 0.0f});
@@ -104,9 +93,6 @@ int main()
 
         cloud2.draw(newPosCloud2, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake);
         decor.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake);
-
-        shaderTexture.use();
-
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
         boids.update(ctx.delta_time(), obstacles);
     };

@@ -1,4 +1,4 @@
-#include "Markov.hpp"
+#include "markov.hpp"
 
 
 Markov::Chain::Chain(int order): m_order(order){}

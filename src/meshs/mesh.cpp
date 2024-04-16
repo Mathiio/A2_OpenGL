@@ -157,35 +157,3 @@ void Mesh::loadModel(const std::string& fileName)
     }
     m_vertexCount = m_vertices.size();
 }
-
-
-
-
-
-glm::vec3 Mesh::randomPos() {
-    Markov::Chain chain(2); // 2 est l'ordre de la chaîne, vous pouvez ajuster cela si nécessaire
-
-    // Génère une chaîne de caractères aléatoire de longueur 10 (vous pouvez ajuster la longueur si nécessaire)
-    std::string randomString = chain.generateWord(10);
-
-    // Obtient les parties de la chaîne séparées par des espaces
-    std::vector<std::string> parts = Markov::split(randomString, ' ');
-
-    // Vérifie si la chaîne contient au moins deux parties (x et y)
-    if (parts.size() < 2) {
-        throw std::runtime_error("Chaîne générée invalide : pas assez de parties.");
-    }
-
-    // Obtient les valeurs de x et y à partir des deux premières parties
-    float x = std::stof(parts[0]);
-    float y = std::stof(parts[1]);
-
-    // Génère une valeur aléatoire pour l'axe z dans la plage de 1 à 1.2
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> dis(1.0f, 1.2f);
-    float z = dis(gen);
-
-    // Retourne le vecteur glm::vec3 avec les valeurs x, y et z générées
-    return glm::vec3(x, y, z);
-}

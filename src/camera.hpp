@@ -78,8 +78,10 @@ public:
         glm::mat4 translateFromOrigin = glm::translate(glm::mat4(1.0f), m_Position);
         glm::mat4 finalTransform      = translateFromOrigin * rotationMatrix * translateToOrigin;
 
-        glm::vec4 transformedPoint  = finalTransform * glm::vec4(character.getPosition(), 1.0f);
+        glm::vec4 transformedPoint  = rotationMatrix * glm::vec4(character.getPosition(), 1.0f);
         glm::vec3 transformedCoords = glm::vec3(transformedPoint);
         character.setPosition(transformedCoords);
+
+        m_Position = rotationMatrix * glm::vec4(m_Position, 1.0f);
     }
 };

@@ -19,13 +19,13 @@ void ContextManager::check_keys(p6::Context& ctx, Camera& camera, Character& cha
     }
     if (ctx.key_is_pressed(GLFW_KEY_LEFT) || ctx.key_is_pressed(GLFW_KEY_A))
     {
-        camera.rotateLeft(1.0f);
-        camera.rotateCharacter(character, 1.0f);
+        camera.rotateLeft(5.0f);
+        camera.rotateCharacter(character, 5.0f);
     }
     if (ctx.key_is_pressed(GLFW_KEY_RIGHT) || ctx.key_is_pressed(GLFW_KEY_D))
     {
-        camera.rotateLeft(-1.0f);
-        camera.rotateCharacter(character, -1.0f);
+        camera.rotateLeft(-5.0f);
+        camera.rotateCharacter(character, -5.0f);
     }
     if (ctx.key_is_pressed(GLFW_KEY_UP) || ctx.key_is_pressed(GLFW_KEY_W))
     {

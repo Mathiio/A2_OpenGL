@@ -6,9 +6,8 @@
 
 class Mesh {
 protected:
-    GLuint m_vbo;
-    GLuint m_vao;
-    // rendering::Texture m_texture;
+    GLuint                           m_vbo;
+    GLuint                           m_vao;
     std::vector<glimac::ShapeVertex> m_vertices;
     std::vector<int>                 m_index;
     GLsizei                          m_vertexCount;
@@ -26,7 +25,7 @@ public:
     void drawArray(GLuint textName);
     void setRotation(float angle);
 
-    void draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName);
+    void draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName, float angle);
 
     void setVao();
 

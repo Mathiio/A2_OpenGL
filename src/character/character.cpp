@@ -1,33 +1,23 @@
-#include "boids/boid.hpp"
+#include "character.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <vector>
 #include "glm/fwd.hpp"
 #include "glm/geometric.hpp"
 #include "meshs/mesh.hpp"
 
-Boid::Boid(glm::vec3 position, glm::vec3 velocity, float radius)
+Character::Character(glm::vec3 position, glm::vec3 velocity, float rotation)
     : position(position)
     , velocity(velocity)
-    , radius(radius)
+    , rotation(rotation)
 {}
 
-Boid::Boid()
-    : position(glm::vec3{
-        p6::random::number(-0.8f, 0.8f),
-        p6::random::number(-0.8f, 0.8f),
-        p6::random::number(-0.8f, 0.8f)
-    })
+Character::Character()
+    : position(glm::vec3{0.0, -0.2, -1.5})
     , velocity(glm::vec3{0.01f, 0.01f, 0.01f})
-    , radius(0.01f)
+    , rotation(180.0f)
 {}
 
-void Boid::update(float delta_time)
-{
-    position += velocity * delta_time;
-}
-
-void Boid::drawMesh(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const
+void Character::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const
 {
     glm::vec3 direction(velocity.x, velocity.y, velocity.z);
     direction = glm::normalize(direction);
@@ -51,15 +41,20 @@ void Boid::drawMesh(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint 
     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-    mesh.draw(position, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, textName, 0.0f);
+    mesh.draw(position, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, textName, rotation);
 }
 
-glm::vec3 Boid::getPosition() const
+glm::vec3 Character::getPosition() const
 {
     return position;
 }
 
-glm::vec3 Boid::getVelocity() const
+glm::vec3 Character::getVelocity() const
 {
     return velocity;
+}
+
+float Character::getRotation() const
+{
+    return rotation;
 }

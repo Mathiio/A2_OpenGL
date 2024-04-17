@@ -71,17 +71,16 @@ public:
 
     void rotateCharacter(Character& character, float orientation)
     {
+        glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f * orientation), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        glm::mat4 cameraToCharacter   = glm::translate(glm::mat4(1.0f), -character.getPosition());
+        glm::mat4 cameraFromCharacter = glm::translate(glm::mat4(1.0f), character.getPosition());
+        glm::mat4 cameraTransform     = cameraFromCharacter * rotationMatrix * cameraToCharacter;
+
+        glm::vec4 cameraPoint  = cameraTransform * glm::vec4(m_Position, 1.0f);
+        glm::vec3 cameraCoords = glm::vec3(cameraPoint);
+        m_Position             = cameraCoords;
+
         character.setRotation(glm::degrees(m_Theta));
-
-        glm::mat4 rotationMatrix      = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f * orientation), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 translateToOrigin   = glm::translate(glm::mat4(1.0f), -m_Position);
-        glm::mat4 translateFromOrigin = glm::translate(glm::mat4(1.0f), m_Position);
-        glm::mat4 finalTransform      = translateFromOrigin * rotationMatrix * translateToOrigin;
-
-        glm::vec4 transformedPoint  = rotationMatrix * glm::vec4(character.getPosition(), 1.0f);
-        glm::vec3 transformedCoords = glm::vec3(transformedPoint);
-        character.setPosition(transformedCoords);
-
-        m_Position = rotationMatrix * glm::vec4(m_Position, 1.0f);
     }
 };

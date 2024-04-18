@@ -65,7 +65,7 @@ int main()
     cloud1.setBuffers();
 
     Mesh      cloud2("cloud2.obj");
-    glm::vec3 newPosCloud2 = randomPos();
+    glm::vec3 randomCloudPos = gaussianVec2D(0, 0.15, -0.8, 0.8, 0.98, -0.8, 0.8);
     GLuint cloud2Bake = Texture::instance().loadTexture("assets/textures/cloud2.png");
     cloud2.setBuffers();
 
@@ -90,7 +90,7 @@ int main()
         glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);                      // Intensité de la lumière
 
         character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
-        cloud2.draw(newPosCloud2, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake, 0.0f);
+        cloud2.draw(randomCloudPos, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, cloud2Bake, 0.0f);
         decor.draw(glm::vec3(0., 0., 0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, decorBake, 0.0f);
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid, beeBake);
         boids.update(ctx.delta_time(), obstacles);

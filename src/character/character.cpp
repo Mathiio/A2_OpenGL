@@ -13,7 +13,7 @@ Character::Character(glm::vec3 position, glm::vec3 velocity, float rotation)
 {}
 
 Character::Character()
-    : position(glm::vec3{0.0, -0.2, -1.0})
+    : position(glm::vec3{0.0f, -0.5f, -1.0f})
     , velocity(glm::vec3{0.01f, 0.01f, 0.01f})
     , rotation(180.0f)
 {}

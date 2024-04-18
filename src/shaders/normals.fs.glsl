@@ -1,17 +1,3 @@
-// #version 410 
-
-// in vec3 FragPos;
-// in vec3 vNormal_vs;
-// in vec2 TexCoords;
-
-// out vec4 FragColor;
-
-// void main()
-// {
-//     // Output normalized normal as color
-//     FragColor = vec4(normalize(vNormal_vs), 1.0);
-// }
-
 #version 330 core
 
 in vec3 fragNormal;

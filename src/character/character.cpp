@@ -1,6 +1,7 @@
 #include "character.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "./camera.hpp"
 #include "glm/fwd.hpp"
 #include "glm/geometric.hpp"
 #include "meshs/mesh.hpp"
@@ -12,7 +13,7 @@ Character::Character(glm::vec3 position, glm::vec3 velocity, float rotation)
 {}
 
 Character::Character()
-    : position(glm::vec3{0.0, -0.2, -1.5})
+    : position(glm::vec3{0.0, -0.2, -1.0})
     , velocity(glm::vec3{0.01f, 0.01f, 0.01f})
     , rotation(180.0f)
 {}
@@ -42,6 +43,34 @@ void Character::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
     mesh.draw(position, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, textName, rotation);
+}
+
+void Character::move(Camera& camera, float direction)
+{
+    glm::vec3 newPosition = position + camera.getFront() * -direction;
+
+    if (newPosition.x >= -1.0f && newPosition.x <= 1.0f && newPosition.z >= -1.0f && newPosition.z <= 1.0f)
+    {
+        camera.move(direction);
+        setPosition(newPosition);
+    }
+}
+
+void Character::rotate(Camera& camera, float orientation)
+{
+    camera.rotate(orientation);
+
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f * orientation), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 cameraToCharacter   = glm::translate(glm::mat4(1.0f), -position);
+    glm::mat4 cameraFromCharacter = glm::translate(glm::mat4(1.0f), position);
+    glm::mat4 cameraTransform     = cameraFromCharacter * rotationMatrix * cameraToCharacter;
+
+    glm::vec4 cameraPoint  = cameraTransform * glm::vec4(camera.getPosition(), 1.0f);
+    glm::vec3 cameraCoords = glm::vec3(cameraPoint);
+    camera.setPosition(cameraCoords);
+
+    setRotation(glm::degrees(camera.getTheta()));
 }
 
 glm::vec3 Character::getPosition() const

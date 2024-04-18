@@ -4,7 +4,6 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "character/character.hpp"
 
 class Camera {
 private:
@@ -29,19 +28,16 @@ private:
 public:
     // Constructor
     Camera()
-        : m_Position(0.0f, 0.0f, -2.0f), m_Phi(glm::pi<float>()), m_Theta(glm::radians(180.0f)), m_FrontVector(0.0f, 0.0f, -1.0f), m_LeftVector(-1.0f, 0.0f, 0.0f), m_UpVector(0.0f, 1.0f, 0.0f)
+        : m_Position(0.0f, 0.0f, -1.5f), m_Phi(glm::pi<float>()), m_Theta(glm::radians(180.0f)), m_FrontVector(0.0f, 0.0f, -1.0f), m_LeftVector(-1.0f, 0.0f, 0.0f), m_UpVector(0.0f, 1.0f, 0.0f)
     {
         computeDirectionVectors();
     }
 
-    // Move along left vector
-    void moveLeft(float t) { m_Position -= t * m_LeftVector; }
-
     // Move along front vector
-    void moveFront(float t) { m_Position -= t * m_FrontVector; }
+    void move(float t) { m_Position -= t * m_FrontVector; }
 
-    // Rotate left
-    void rotateLeft(float degrees)
+    // Rotate
+    void rotate(float degrees)
     {
         float radians = glm::radians(degrees);
         m_Theta += radians;
@@ -60,27 +56,9 @@ public:
     glm::mat4 getViewMatrix() const { return glm::lookAt(m_Position, m_Position + m_FrontVector, m_UpVector); }
     glm::vec3 getPosition() const { return m_Position; }
 
-    float getTheta() const { return m_Theta; }
-    float getPhi() const { return m_Phi; }
+    float     getTheta() const { return m_Theta; }
+    float     getPhi() const { return m_Phi; }
+    glm::vec3 getFront() const { return m_FrontVector; }
 
-    void moveCharacter(Character& character, float direction)
-    {
-        glm::vec3 newPosition = character.getPosition() + direction * m_FrontVector;
-        character.setPosition(newPosition);
-    }
-
-    void rotateCharacter(Character& character, float orientation)
-    {
-        glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f * orientation), glm::vec3(0.0f, 1.0f, 0.0f));
-
-        glm::mat4 cameraToCharacter   = glm::translate(glm::mat4(1.0f), -character.getPosition());
-        glm::mat4 cameraFromCharacter = glm::translate(glm::mat4(1.0f), character.getPosition());
-        glm::mat4 cameraTransform     = cameraFromCharacter * rotationMatrix * cameraToCharacter;
-
-        glm::vec4 cameraPoint  = cameraTransform * glm::vec4(m_Position, 1.0f);
-        glm::vec3 cameraCoords = glm::vec3(cameraPoint);
-        m_Position             = cameraCoords;
-
-        character.setRotation(glm::degrees(m_Theta));
-    }
+    void setPosition(glm::vec3 position) { m_Position = position; }
 };

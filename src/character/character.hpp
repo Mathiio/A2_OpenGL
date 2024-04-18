@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "./camera.hpp"
 #include "glimac/common.hpp"
 #include "glm/fwd.hpp"
 #include "meshs/mesh.hpp"
@@ -12,6 +13,8 @@ public:
     Character();
 
     void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const;
+    void move(Camera& camera, float direction);
+    void rotate(Camera& camera, float orientation);
 
     glm::vec3 getPosition() const;
     glm::vec3 getVelocity() const;

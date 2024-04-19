@@ -12,7 +12,7 @@ public:
     Character(glm::vec3 position, glm::vec3 velocity, float rotation);
     Character();
 
-    void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const;
+    void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const;
     void move(Camera& camera, float direction);
     void rotate(Camera& camera, float orientation);
 

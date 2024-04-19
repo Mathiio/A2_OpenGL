@@ -28,7 +28,7 @@ private:
 public:
     // Constructor
     Camera()
-        : m_Position(0.0f, -0.3f, -1.5f), m_Phi(glm::pi<float>()), m_Theta(glm::radians(180.0f)), m_FrontVector(0.0f, 0.0f, -1.0f), m_LeftVector(-1.0f, 0.0f, 0.0f), m_UpVector(0.0f, 1.0f, 0.0f)
+        : m_Position(0.0f, -0.1f, -2.f), m_Phi(glm::pi<float>()), m_Theta(glm::radians(180.0f)), m_FrontVector(0.0f, 0.0f, -1.0f), m_LeftVector(-1.0f, 0.0f, 0.0f), m_UpVector(0.0f, 1.0f, 0.0f)
     {
         computeDirectionVectors();
     }

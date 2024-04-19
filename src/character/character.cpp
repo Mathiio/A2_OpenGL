@@ -13,12 +13,12 @@ Character::Character(glm::vec3 position, glm::vec3 velocity, float rotation)
 {}
 
 Character::Character()
-    : position(glm::vec3{0.0f, -0.5f, -1.0f})
+    : position(glm::vec3{0.0f, -0.3f, -1.0f})
     , velocity(glm::vec3{0.01f, 0.01f, 0.01f})
     , rotation(180.0f)
 {}
 
-void Character::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const
+void Character::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const
 {
     glm::vec3 direction(velocity.x, velocity.y, velocity.z);
     direction = glm::normalize(direction);
@@ -42,7 +42,7 @@ void Character::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint
     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-    mesh.draw(position, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, textName, rotation);
+    mesh.draw(position, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, rotation);
 }
 
 void Character::move(Camera& camera, float direction)

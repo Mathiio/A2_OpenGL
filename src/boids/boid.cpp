@@ -27,7 +27,7 @@ void Boid::update(float delta_time)
     position += velocity * delta_time;
 }
 
-void Boid::drawMesh(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const
+void Boid::drawMesh(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const
 {
     glm::vec3 direction(velocity.x, velocity.y, velocity.z);
     direction = glm::normalize(direction);
@@ -51,7 +51,7 @@ void Boid::drawMesh(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint 
     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-    mesh.draw(position, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, textName, 0.0f);
+    mesh.draw(position, glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, 0.0f);
 }
 
 glm::vec3 Boid::getPosition() const

@@ -14,7 +14,7 @@ public:
     void addBoid(int number = 1);
     void removeBoid(int number = 1);
     void update(float delta_time, const Obstacles& obstacles);
-    void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const;
+    void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const;
     void helper();
 
 private:

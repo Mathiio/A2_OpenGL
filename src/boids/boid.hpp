@@ -8,18 +8,23 @@
 
 class Boid {
 public:
-    Boid(glm::vec3 position, glm::vec3 velocity, float radius);
+    Boid(glm::vec3 position, glm::vec3 velocity, glm::vec3 scale, float rotation);
     Boid();
 
     void      update(float delta_time);
     void      drawMesh(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const;
-    glm::vec3 getPosition() const;
-    glm::vec3 getVelocity() const;
+    glm::vec3 getPosition() const { return position; }
+    glm::vec3 getVelocity() const { return velocity; }
+    glm::vec3 getScale() const { return scale; }
+    float     getRotation() const { return rotation; }
     void      setVelocity(glm::vec3 velocity) { this->velocity = velocity; };
-    void      set_position(glm::vec3 position) { this->position = position; };
+    void      setPosition(glm::vec3 position) { this->position = position; };
+    void      setScale(glm::vec3 scale) { this->scale = scale; };
+    void      setRotation(float rotation) { this->rotation = rotation; };
 
 private:
     glm::vec3 position;
     glm::vec3 velocity;
-    float     radius;
+    glm::vec3 scale;
+    float     rotation;
 };

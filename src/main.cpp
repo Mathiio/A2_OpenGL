@@ -1,7 +1,6 @@
 #include <imgui.h>
 #include <time.h>
 #include <cstdlib>
-#include <vector>
 
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <iostream>
@@ -10,12 +9,10 @@
 #include "character/character.hpp"
 #include "context/contextManager.hpp"
 #include "doctest/doctest.h"
-#include "glimac/common.hpp"
 #include "meshs/mesh.hpp"
 #include "meshs/meshs.hpp"
 #include "obstacles/obstacles.hpp"
 #include "random/random.hpp"
-#include "textures/texture.hpp"
 
 #define GLFW_INCLUDE_NONE
 
@@ -33,9 +30,9 @@ int main()
     Obstacles obstacles;
     ContextManager::setup(ctx, boids);
 
-    obstacles.addObstacle({{0.727f, -0.30f, 0.672f}, 0.544f, 1.30f, 0.65f}); // Grand Sapin
-    obstacles.addObstacle({{-0.690f, -0.750f, 0.549f}, 0.62f, 0.66f, 0.5f}); // Ruche à abeilles
-    obstacles.addObstacle({{-0.401f, -0.620f, -0.862f}, 0.31f, 0.74f, 0.27f}); // Petit sapin
+    obstacles.addObstacle({{0.727f, -0.30f, 0.672f}, 0.544f, 1.30f, 0.65f});      // Grand Sapin
+    obstacles.addObstacle({{-0.690f, -0.750f, 0.549f}, 0.62f, 0.66f, 0.5f});      // Ruche à abeilles
+    obstacles.addObstacle({{-0.401f, -0.620f, -0.862f}, 0.31f, 0.74f, 0.27f});    // Petit sapin
     obstacles.addObstacle({{-0.644f, -0.890f, -0.076f}, 0.524f, 0.266f, 0.466f}); // Arbre coupé
     obstacles.addObstacle({{-0.819f, -0.856f, -0.841f}, 0.370f, 0.340f, 0.328f}); // Tronc d'arbre
 
@@ -54,11 +51,13 @@ int main()
     GLuint uLightIntensityLocation = glGetUniformLocation(shaderTexture.id(), "uLightIntensity");
     glEnable(GL_DEPTH_TEST);
 
-    Mesh decor("decor.obj", "decor.png");
-    Mesh boid("bee.obj", "bee.png");
+    Mesh  decor("decor.obj", "decor.png");
+    Mesh  boid("bee.obj", "bee.png");
     Meshs clouds("cloud.obj", "cloud.png", 10);
     clouds.randomPos();
     clouds.randomScale();
+
+    boids.randomRotation();
 
     shaderTexture.use();
 

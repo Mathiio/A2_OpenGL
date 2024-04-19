@@ -89,11 +89,11 @@ void Boids::update(float delta_time, const Obstacles& obstacles)
     }
 }
 
-void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh, GLuint textName) const
+void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const
 {
     for (auto const& boid : boids)
     {
-        boid.drawMesh(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, mesh, textName);
+        boid.drawMesh(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, mesh);
     }
 }
 

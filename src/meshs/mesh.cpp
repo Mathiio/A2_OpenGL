@@ -21,7 +21,7 @@ void Mesh::drawArray(GLuint textName)
     glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
 }
 
-void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, GLuint textName, float angle)
+void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, float angle)
 {
     setRotation(angle);
 
@@ -36,7 +36,7 @@ void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 
     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(ViewMatrixModel));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-    drawArray(textName);
+    drawArray(getTexture());
 }
 
 void Mesh::setVbo()

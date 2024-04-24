@@ -163,14 +163,19 @@ float randBeta(float min, float max, float threshold)
     std::random_device rd;
     std::mt19937       gen(rd());
 
-    float                          alpha = 1.5f;
-    float                          beta  = 1.0f;
-    std::_Beta_distribution<float> distribution(alpha, beta);
+    float alpha = 1.5f;
+    float beta  = 1.0f;
+
+    std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
 
     float randomNumber;
     do
     {
-        randomNumber = distribution(gen);
+        float u = uniform_dist(gen);
+        float v = uniform_dist(gen);
+
+        randomNumber = pow(u, 1.0f / alpha);
+        randomNumber /= pow(u, 1.0f / alpha) + pow(v, 1.0f / beta);
         randomNumber = min + (max - min) * randomNumber;
     } while (randomNumber <= threshold);
 

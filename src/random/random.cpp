@@ -110,9 +110,9 @@ glm::vec3 randBimodale(double min, double max, double peak1, double peak2, doubl
     return glm::vec3(randNumX, randNumY, randNumZ);
 }
 
-double randUniform(double min, double max)
+float randUniform(float min, float max)
 {
-    return min + static_cast<double>(rand()) / (RAND_MAX / (max - min));
+    return min + static_cast<float>(rand()) / (RAND_MAX / (max - min));
 }
 
 // Random number selon distribution gaussienne avec moyenne mu et écart-type sigma et un intervalle

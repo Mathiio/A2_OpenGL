@@ -9,6 +9,7 @@
 #include "character/character.hpp"
 #include "context/contextManager.hpp"
 #include "doctest/doctest.h"
+#include "light.hpp"
 #include "meshs/mesh.hpp"
 #include "meshs/meshs.hpp"
 #include "obstacles/obstacles.hpp"
@@ -36,19 +37,15 @@ int main()
     obstacles.addObstacle({{-0.644f, -0.890f, -0.076f}, 0.524f, 0.266f, 0.466f}); // Arbre coupé
     obstacles.addObstacle({{-0.819f, -0.856f, -0.841f}, 0.370f, 0.340f, 0.328f}); // Tronc d'arbre
 
-    const p6::Shader shaderTexture = p6::load_shader(
+    const p6::Shader shader = p6::load_shader(
         "shaders/3D.vs.glsl",
-        "shaders/directionalLight.fs.glsl"
+        "shaders/pointLight.fs.glsl"
     );
 
-    GLuint uMVPMatrixLocation      = glGetUniformLocation(shaderTexture.id(), "uMVPMatrix");
-    GLuint uMVMatrixLocation       = glGetUniformLocation(shaderTexture.id(), "uMVMatrix");
-    GLuint uNormalMatrixLocation   = glGetUniformLocation(shaderTexture.id(), "uNormalMatrix");
-    GLuint uKdLocation             = glGetUniformLocation(shaderTexture.id(), "uKd");
-    GLuint uKsLocation             = glGetUniformLocation(shaderTexture.id(), "uKs");
-    GLuint uShininessLocation      = glGetUniformLocation(shaderTexture.id(), "uShininess");
-    GLuint uLightDirLocation       = glGetUniformLocation(shaderTexture.id(), "uLightDir_vs");
-    GLuint uLightIntensityLocation = glGetUniformLocation(shaderTexture.id(), "uLightIntensity");
+    GLuint uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
+    GLuint uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
+    GLuint uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
+
     glEnable(GL_DEPTH_TEST);
 
     Mesh  decor("decor.obj", "decor.png");
@@ -57,11 +54,14 @@ int main()
     clouds.randomPos();
     clouds.randomScale();
     boids.randomRotation();
-    glm::vec3 randomColor(float(randUniform(0.5f, 1.0f)), float(randUniform(0.5f, 1.0f)), float(randUniform(0.5f, 1.0f)));
 
-    shaderTexture.use();
+    Light lightCharacter(1, shader);
+    Light lightFixed(2, shader);
+
+    shader.use();
 
     ctx.update = [&]() {
+        // ctx.background({0.53f, 0.65f, 0.83f});
         ctx.background({0.06f, 0.08f, 0.0f});
         ContextManager::check_keys(ctx, camera, character, boids);
 
@@ -70,15 +70,8 @@ int main()
         glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 viewMatrix = camera.getViewMatrix();
 
-        glm::vec4 lightDir    = {-2.0f, 1.0f, -2.0f, 0.0f};
-        glm::vec3 lightDir_vs = glm::vec3(viewMatrix * lightDir);
-
-        glUniform3f(uKdLocation, 1.0, 0.9f, 0.65f);                                  // Couleur diffuse
-        glUniform3f(uKdLocation, randomColor.x, randomColor.y, randomColor.z);       // Couleur diffuse
-        glUniform3f(uKsLocation, 1.0f, 1.0f, 1.0f);                                  // Couleur spéculaire
-        glUniform1f(uShininessLocation, 4.0f);                                       // Brilliance
-        glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière
-        glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);                      // Intensité de la lumière
+        lightCharacter.update(viewMatrix, character);
+        lightFixed.update(viewMatrix, character);
 
         character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid);
         clouds.draw(ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, 0.0f);

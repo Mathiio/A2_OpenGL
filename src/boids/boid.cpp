@@ -5,6 +5,7 @@
 #include "glm/fwd.hpp"
 #include "glm/geometric.hpp"
 #include "meshs/mesh.hpp"
+#include "random/random.hpp"
 
 Boid::Boid(glm::vec3 position, glm::vec3 velocity, glm::vec3 scale, float rotation)
     : position(position)
@@ -21,6 +22,7 @@ Boid::Boid()
     })
     , velocity(glm::vec3{0.01f, 0.01f, 0.01f})
     , scale(glm::vec3{1.0f, 1.0f, 1.0f})
+    // , scale(randBernoulli(1.0f))
     , rotation(0.0f)
 {}
 

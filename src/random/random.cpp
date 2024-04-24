@@ -10,7 +10,7 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
 
-float markov(glm::vec3 transition, float initial)
+float randMarkov(glm::vec3 transition, float initial)
 {
     float sequence = initial;
 
@@ -43,6 +43,26 @@ float markov(glm::vec3 transition, float initial)
             break;
     }
     return sequence - initial;
+}
+
+int randBernoulli(float p)
+{
+    std::random_device rd;
+    std::mt19937       gen(rd());
+
+    std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
+    float                                 uniform_random = uniform_dist(gen);
+
+    if (uniform_random < p)
+    {
+        std::uniform_real_distribution<float> bernoulli_dist(0.2f, 1.5f);
+        std::cout << bernoulli_dist(gen) << std::endl;
+        return bernoulli_dist(gen);
+    }
+    else
+    {
+        return 1.0f;
+    }
 }
 
 // Fonction pour générer un nombre aléatoire selon une distribution bimodale entre min et max
@@ -90,7 +110,7 @@ glm::vec3 randBimodale(double min, double max, double peak1, double peak2, doubl
     return glm::vec3(randNumX, randNumY, randNumZ);
 }
 
-double randomUniform(double min, double max)
+double randUniform(double min, double max)
 {
     return min + static_cast<double>(rand()) / (RAND_MAX / (max - min));
 }
@@ -101,17 +121,70 @@ glm::vec3 randGaussian(double mu, double sigma, double xmin, double xmax, double
     double x, z;
     do
     {
-        double u1 = randomUniform(0, 1);
-        double u2 = randomUniform(0, 1);
+        double u1 = randUniform(0, 1);
+        double u2 = randUniform(0, 1);
         x         = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
     } while (x < xmin && x > xmax);
 
     do
     {
-        double u1 = randomUniform(0, 1);
-        double u2 = randomUniform(0, 1);
+        double u1 = randUniform(0, 1);
+        double u2 = randUniform(0, 1);
         z         = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
     } while (z < zmin && z > zmax);
 
     return glm::vec3(mu + sigma * x, height, mu + sigma * z);
+}
+
+float randExponential(int min, int max)
+{
+    std::random_device rd;
+    std::mt19937       gen(rd());
+
+    float lambda = 0.5;
+
+    std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
+    float                                 uniform_random = uniform_dist(gen);
+
+    float randomNumber = -log(1 - uniform_random) / lambda;
+    randomNumber       = min + (max - min) * (1 - exp(-lambda * randomNumber));
+
+    return randomNumber;
+}
+
+float randBeta(float min, float max, float threshold)
+{
+    if (min >= max)
+    {
+        std::cerr << "Erreur : bornes invalides !" << std::endl;
+        return 0.0;
+    }
+
+    std::random_device rd;
+    std::mt19937       gen(rd());
+
+    float                          alpha = 1.5f;
+    float                          beta  = 1.0f;
+    std::_Beta_distribution<float> distribution(alpha, beta);
+
+    float randomNumber;
+    do
+    {
+        randomNumber = distribution(gen);
+        randomNumber = min + (max - min) * randomNumber;
+    } while (randomNumber <= threshold);
+
+    return randomNumber;
+}
+
+float randCauchy(float min, float max)
+{
+    std::random_device rd;
+    std::mt19937       gen(rd());
+
+    std::cauchy_distribution<double> distribution((max + min) / 2, (max - min) / 2);
+
+    double randomNumber = distribution(gen);
+
+    return randomNumber;
 }

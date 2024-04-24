@@ -56,8 +56,8 @@ int main()
     Meshs clouds("cloud.obj", "cloud.png", 10);
     clouds.randomPos();
     clouds.randomScale();
-
     boids.randomRotation();
+    glm::vec3 randomColor(float(randUniform(0.5f, 1.0f)), float(randUniform(0.5f, 1.0f)), float(randUniform(0.5f, 1.0f)));
 
     shaderTexture.use();
 
@@ -74,6 +74,7 @@ int main()
         glm::vec3 lightDir_vs = glm::vec3(viewMatrix * lightDir);
 
         glUniform3f(uKdLocation, 1.0, 0.9f, 0.65f);                                  // Couleur diffuse
+        glUniform3f(uKdLocation, randomColor.x, randomColor.y, randomColor.z);       // Couleur diffuse
         glUniform3f(uKsLocation, 1.0f, 1.0f, 1.0f);                                  // Couleur spéculaire
         glUniform1f(uShininessLocation, 4.0f);                                       // Brilliance
         glUniform3f(uLightDirLocation, lightDir_vs.x, lightDir_vs.y, lightDir_vs.z); // Direction de la lumière

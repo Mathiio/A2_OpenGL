@@ -17,6 +17,9 @@ public:
     void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const;
     void randomRotation();
     void helper();
+    
+    float getMovementSpeed() {return movementSpeed;};
+    float getRotationSpeed() {return rotationSpeed;};
 
 private:
     std::vector<Boid> boids;
@@ -28,5 +31,7 @@ private:
     float             cohesionFactor{.02f};
     float             maxSpeed{.6f};
     float             minSpeed{.4f};
+    float             movementSpeed{0.1f};
+    float             rotationSpeed{5.0f};
     int               numBoids;
 };

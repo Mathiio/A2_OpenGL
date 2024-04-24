@@ -107,8 +107,8 @@ void Boids::randomRotation()
 
     for (auto& boid : boids)
     {
-        float newScale = markov(transition, boid.getRotation());
-        boid.setRotation(newScale * 360);
+        float newRotation = randMarkov(transition, boid.getRotation());
+        boid.setRotation(newRotation * 360);
     }
 }
 

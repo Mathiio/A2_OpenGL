@@ -63,7 +63,7 @@ int main()
 
     ctx.update = [&]() {
         ctx.background({0.06f, 0.08f, 0.0f});
-        ContextManager::check_keys(ctx, camera, character);
+        ContextManager::check_keys(ctx, camera, character, boids);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

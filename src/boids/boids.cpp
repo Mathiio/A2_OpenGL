@@ -143,6 +143,8 @@ void Boids::helper()
     ImGui::SliderFloat("Alignement factor", &alignementFactor, .001f, 1.f);
     ImGui::SliderFloat("Max speed", &maxSpeed, .001f, 1.f);
     ImGui::SliderFloat("Min speed", &minSpeed, .001f, 1.f);
+    ImGui::SliderFloat("Movement speed", &movementSpeed, 0.01f, 0.1f);
+    ImGui::SliderFloat("Rotation speed", &rotationSpeed, 1.0f, 5.0f);
     ImGui::InputInt("Number of boids wanted", &numBoids);
     if (ImGui::Button("Apply"))
     {

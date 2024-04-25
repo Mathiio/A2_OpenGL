@@ -1,9 +1,7 @@
 #include <imgui.h>
-#include <time.h>
 #include <cstdlib>
 
 #define DOCTEST_CONFIG_IMPLEMENT
-#include <iostream>
 #include "boids/boids.hpp"
 #include "camera.hpp"
 #include "character/character.hpp"
@@ -13,7 +11,6 @@
 #include "meshs/mesh.hpp"
 #include "meshs/meshs.hpp"
 #include "obstacles/obstacles.hpp"
-#include "random/random.hpp"
 
 #define GLFW_INCLUDE_NONE
 
@@ -23,7 +20,6 @@ int main()
         return EXIT_FAILURE;
 
     auto ctx = p6::Context{{.title = "Bees"}};
-    srand(static_cast<unsigned int>(time(nullptr)));
 
     Camera         camera;
     Character      character;

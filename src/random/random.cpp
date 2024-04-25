@@ -3,19 +3,17 @@
 #include <p6/p6.h>
 #include <cmath>
 #include <cstdlib>
-#include <ctime>
 #include <glm/gtc/random.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
 
 float randMarkov(glm::vec3 transition, float initial)
 {
     // Initialisation du générateur de nombres aléatoires
-    std::random_device               rd;
-    std::mt19937                     gen(rd());
-    std::uniform_real_distribution<> dis(0.0, 1.0);
+    std::random_device                    rd;
+    std::mt19937                          gen(rd());
+    std::uniform_real_distribution<float> dis(0.0f, 1.0f);
 
     // État initial
     glm::vec3 currentState = glm::vec3(initial, 0.0f, 0.0f);
@@ -44,7 +42,7 @@ float randMarkov(glm::vec3 transition, float initial)
     return sequence - initial;
 }
 
-int randBernoulli(float p)
+float randBernoulli(float p)
 {
     std::random_device rd;
     std::mt19937       gen(rd());
@@ -55,27 +53,24 @@ int randBernoulli(float p)
     if (uniform_random < p)
     {
         std::uniform_real_distribution<float> bernoulli_dist(0.2f, 1.5f);
-        std::cout << bernoulli_dist(gen) << std::endl;
         return bernoulli_dist(gen);
     }
-    else
-    {
-        return 1.0f;
-    }
+    return 1.0f;
 }
 
-float randBinomial(int n, double p)
+float randBinomial(int n, float p)
 {
     // Initialisation du générateur de nombres aléatoires
-    std::random_device rd;
-    std::mt19937       gen(rd());
+    std::random_device                     rd;
+    std::mt19937                           gen(rd());
+    std::uniform_real_distribution<double> dis(0.0, 1.0);
 
     int successes = 0;
 
     // Génération d'un échantillon binomial
     for (int i = 0; i < n; ++i)
     {
-        double randNum = static_cast<double>(rand()) / RAND_MAX; // Générer un nombre aléatoire entre 0 et 1
+        double randNum = dis(gen);
         if (randNum < p)
         {                // Comparaison avec la probabilité de succès
             successes++; // Incrémenter le nombre de succès si le nombre aléatoire est inférieur à la probabilité de succès
@@ -83,7 +78,7 @@ float randBinomial(int n, double p)
     }
 
     // Retourner la proportion de succès dans l'échantillon
-    return static_cast<float>(successes) / n;
+    return static_cast<float>(successes) / static_cast<float>(n);
 }
 
 float randUniform(float min, float max)
@@ -94,8 +89,9 @@ float randUniform(float min, float max)
 float randGeometric(double p, float minBound, float maxBound)
 {
     // Initialisation du générateur de nombres aléatoires
-    std::random_device rd;
-    std::mt19937       gen(rd());
+    std::random_device                     rd;
+    std::mt19937                           gen(rd());
+    std::uniform_real_distribution<double> dis(0.0, 1.0);
 
     float timeToSuccess = 0.0f;
     float maxTrials     = maxBound / minBound;
@@ -103,8 +99,9 @@ float randGeometric(double p, float minBound, float maxBound)
     // Génération d'un échantillon selon la loi géométrique
     while (true)
     {
-        timeToSuccess += minBound + ((maxBound - minBound) * (static_cast<float>(rand()) / RAND_MAX));
-        double randNum = static_cast<double>(rand()) / RAND_MAX; // Générer un nombre aléatoire entre 0 et 1
+        std::uniform_real_distribution<float> distribution(minBound, maxBound);
+        timeToSuccess += distribution(gen);
+        double randNum = dis(gen);
         if (randNum < p)
         {          // Comparaison avec la probabilité de succès
             break; // Sortir de la boucle dès que le succès est obtenu
@@ -130,7 +127,7 @@ float randExponential(int min, int max)
     float                                 uniform_random = uniform_dist(gen);
 
     float randomNumber = -log(1 - uniform_random) / lambda;
-    randomNumber       = min + (max - min) * (1 - exp(-lambda * randomNumber));
+    randomNumber       = static_cast<float>(min) + static_cast<float>(max - min) * (1 - exp(-lambda * randomNumber));
 
     return randomNumber;
 }
@@ -139,7 +136,7 @@ float randBeta(float min, float max, float threshold)
 {
     if (min >= max)
     {
-        std::cerr << "Erreur : bornes invalides !" << std::endl;
+        std::cerr << "Erreur : bornes invalides !\n";
         return 0.0;
     }
 
@@ -151,8 +148,9 @@ float randBeta(float min, float max, float threshold)
 
     std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
 
-    float randomNumber;
-    do
+    float randomNumber = 0;
+
+    while (randomNumber <= threshold)
     {
         float u = uniform_dist(gen);
         float v = uniform_dist(gen);
@@ -160,7 +158,7 @@ float randBeta(float min, float max, float threshold)
         randomNumber = pow(u, 1.0f / alpha);
         randomNumber /= pow(u, 1.0f / alpha) + pow(v, 1.0f / beta);
         randomNumber = min + (max - min) * randomNumber;
-    } while (randomNumber <= threshold);
+    }
 
     return randomNumber;
 }
@@ -189,18 +187,20 @@ float randCauchy(float min, float max)
 bool randPoisson(float lambda)
 {
     // Initialisation du générateur de nombres aléatoires
-    std::random_device rd;
-    std::mt19937       gen(rd());
+    std::random_device                    rd;
+    std::mt19937                          gen(rd());
+    std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
 
     // Génération d'un échantillon selon la loi de Poisson
     float L = exp(-lambda);
     int   k = 0;
     float p = 1;
-    do
+
+    while (p > L)
     {
         k++;
-        p *= static_cast<float>(rand()) / RAND_MAX;
-    } while (p > L);
+        p *= static_cast<float>(uniform_dist(gen)) / RAND_MAX;
+    }
 
     // Retourner l'échantillon de Poisson
     return (k == 1);

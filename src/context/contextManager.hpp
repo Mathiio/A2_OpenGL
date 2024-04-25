@@ -1,14 +1,11 @@
 #pragma once
 
-#include "boids/boid.hpp"
 #include "camera.hpp"
 #include "character/character.hpp"
-#include "p6/p6.h"
 #include "random/random.hpp"
 
 class ContextManager {
 private:
-    // std::vector<Boid> boids;
     float turnFactor{0.04f};
     float visualRange{.15f};
     float protectedRange{.065f};
@@ -24,9 +21,8 @@ private:
     bool  isLowPoly{false};
 
 public:
-    void setup(p6::Context& ctx);
-    void check_keys(p6::Context& ctx, Camera& camera, Character& character);
-    // std::vector<Boid>& getBoids() { return boids; }
+    void  setup(p6::Context& ctx);
+    void  check_keys(p6::Context& ctx, Camera& camera, Character& character);
     float getTurnFactor() const { return turnFactor; }
     float getVisualRange() const { return visualRange; }
     float getProtectedRange() const { return protectedRange; }

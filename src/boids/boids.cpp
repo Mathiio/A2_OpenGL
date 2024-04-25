@@ -1,6 +1,5 @@
 #include "boids/boids.hpp"
 #include <cmath>
-#include <ostream>
 #include "glm/fwd.hpp"
 #include "random/random.hpp"
 
@@ -71,7 +70,7 @@ void Boids::update(float delta_time, const Obstacles& obstacles, ContextManager 
         const glm::vec3& pos = boid.getPosition();
 
         // Nouvelle vélocité si boids trop proche des bords sur x,y,z
-        glm::vec3 velocityChange = glm::vec3(0.0f);
+        auto velocityChange = glm::vec3(0.0f);
 
         // Update nouvelle vélocité si boids trop proche des bords sur x,y,z et changer vélocité
         velocityChange.x += (pos.x < -0.8f) ? context.getTurnFactor() : (pos.x > 0.8f) ? -context.getTurnFactor()
@@ -93,7 +92,7 @@ void Boids::update(float delta_time, const Obstacles& obstacles, ContextManager 
     }
 }
 
-void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh mesh) const
+void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh& mesh) const
 {
     for (auto const& boid : boids)
     {
@@ -137,41 +136,4 @@ void Boids::removeBoid(int number)
             boids.pop_back();
         }
     }
-}
-
-void Boids::helper()
-{
-    // ImGui::Begin("Controls");
-    // ImGui::Text("Number of boids %zu", boids.size());
-    // ImGui::SliderFloat("Turn factor", &turnFactor, .001f, .5f);
-    // ImGui::SliderFloat("Visual range", &visualRange, .001f, .5f);
-    // ImGui::SliderFloat("Protected range", &protectedRange, .001f, .5f);
-    // ImGui::SliderFloat("Cohesion factor", &cohesionFactor, .001f, .5f);
-    // ImGui::SliderFloat("Separation factor", &separationFactor, .001f, 1.f);
-    // ImGui::SliderFloat("Alignement factor", &alignementFactor, .001f, 1.f);
-    // ImGui::SliderFloat("Max speed", &maxSpeed, .001f, 1.f);
-    // ImGui::SliderFloat("Min speed", &minSpeed, .001f, 1.f);
-    // ImGui::SliderFloat("Movement speed", &movementSpeed, 0.01f, 0.1f);
-    // ImGui::SliderFloat("Rotation speed", &rotationSpeed, 1.0f, 5.0f);
-    // ImGui::InputInt("Number of boids wanted", &numBoids);
-    // if (ImGui::Button("Apply"))
-    // {
-    //     if (numBoids != static_cast<int>(boids.size()))
-    //     {
-    //         if (numBoids > 25)
-    //         {
-    //             numBoids = 25;
-    //         }
-
-    //         if (numBoids > static_cast<int>(boids.size()))
-    //         {
-    //             addBoid(numBoids - boids.size());
-    //         }
-    //         else
-    //         {
-    //             removeBoid(boids.size() - numBoids);
-    //         }
-    //     }
-    // }
-    // ImGui::End();
 }

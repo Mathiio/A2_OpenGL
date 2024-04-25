@@ -2,7 +2,6 @@
 
 #include "mesh.hpp"
 #include "random/random.hpp"
-#include "textures/texture.hpp"
 
 class Meshs {
 public:

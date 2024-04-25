@@ -2,10 +2,8 @@
 
 #include <glm/glm.hpp>
 #include "./camera.hpp"
-#include "glimac/common.hpp"
 #include "glm/fwd.hpp"
 #include "meshs/mesh.hpp"
-#include "p6/p6.h"
 
 class Character {
 public:

@@ -19,7 +19,7 @@ public:
     {
         for (auto& mesh : m_meshs)
         {
-            mesh.setPos(randGaussian(0, 0.34, -0.8, 0.8, 0.98, -0.8, 0.8));
+            mesh.setPos(glm::vec3(randGeometric(0.5f, -0.8f, 0.8f), 0.98f, randGeometric(0.5f, -0.8f, 0.8f)));
         }
     }
 
@@ -27,7 +27,7 @@ public:
     {
         for (auto& mesh : m_meshs)
         {
-            mesh.setScale(randBimodale(0.6, 1.4, 0.8, 1.20, 0.1, 0.15));
+            mesh.setScale(glm::vec3(randBinomial(10, 0.7f), randBinomial(10, 0.7f), randBinomial(10, 0.7f)));
         }
     }
 

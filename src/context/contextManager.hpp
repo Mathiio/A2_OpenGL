@@ -17,12 +17,10 @@ private:
     float cohesionFactor{.02f};
     float minSpeed{randBeta(0.01f, 0.6f, 0.0f)};
     float maxSpeed{randBeta(0.01f, 0.6f, minSpeed)};
-    // float             maxSpeed{.6f};
-    // float             minSpeed{.4f};
     float movementSpeed{0.1f};
     float rotationSpeed{5.0f};
     int   numBoids;
-    bool  isNight;
+    bool  isNight{randPoisson(0.1f)};
     bool  isLowPoly{false};
 
 public:

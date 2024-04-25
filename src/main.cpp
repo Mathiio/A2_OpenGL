@@ -55,6 +55,7 @@ int main()
     Meshs clouds("cloud.obj", "cloud.png", 10);
     clouds.randomPos();
     clouds.randomScale();
+    boids.randomScale();
     boids.randomRotation();
 
     Light lightCharacter(1, shader);

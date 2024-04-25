@@ -21,11 +21,18 @@ uniform float uShininess2; // Shininess coefficient
 uniform vec3 uLightPos_vs2; // Direction de la lumière dans l'espace de vue
 uniform vec3 uLightIntensity2; // Intensité de la lumière
 
+// Light 2
+uniform vec3 uKd3; // Diffuse color
+uniform vec3 uKs3; // Specular color
+uniform float uShininess3; // Shininess coefficient
+uniform vec3 uLightPos_vs3; // Direction de la lumière dans l'espace de vue
+uniform vec3 uLightIntensity3; // Intensité de la lumière
+
 // Texture uniform
 uniform sampler2D uText;
 
 // Fonction pour le calcul de la couleur selon le modèle de Blinn-Phong
-vec3 blinnPhong(vec3 normal_vs, vec3 uLightPos_vs, vec3 uLightIntensity, vec3 uKd, vec3 uKs, float uShininess){
+vec3 blinnPhongPos(vec3 normal_vs, vec3 uLightPos_vs, vec3 uLightIntensity, vec3 uKd, vec3 uKs, float uShininess){
     float d = distance(uLightPos_vs, fragPos);
     vec3 LightIntensity = uLightIntensity / (d * d);
 
@@ -39,6 +46,19 @@ vec3 blinnPhong(vec3 normal_vs, vec3 uLightPos_vs, vec3 uLightIntensity, vec3 uK
     return diffuseColor + specularColor; // Couleur finale en combinant diffuse et glossy
 }
 
+vec3 blinnPhongDir(vec3 normal_vs, vec3 viewDir_vs, vec3 uLightDir_vs, vec3 uLightIntensity, vec3 uKd, vec3 uKs, float uShininess)
+{
+    vec3 normalNormalise = normalize(normal_vs);
+
+    vec3 lightDir = normalize(uLightDir_vs); // Direction incidente de la lumière
+    vec3 halfVector = normalize(lightDir + normalize(-viewDir_vs)); // Vecteur halfVector
+    float diffuseFactor = max(dot(normalNormalise, lightDir), 0.0); // Produit scalaire entre la normale et la direction incidente
+    float specularFactor = pow(max(dot(normalNormalise, halfVector), 0.0), uShininess); // Produit scalaire entre le vecteur halfVector et la normale
+    vec3 diffuseColor = uLightIntensity * uKd * diffuseFactor; // Calcul de la couleur diffuse
+    vec3 specularColor = uLightIntensity * uKs * specularFactor; // Calcul de la couleur glossy
+    return diffuseColor + specularColor; // Couleur finale en combinant diffuse et glossy
+}
+
 void main()
 {
     // Récupération de la couleur de texture
@@ -47,9 +67,12 @@ void main()
     // Couleur du fragment calculée à partir du modèle de Blinn-Phong
     vec3 normal_vs = normalize(fragNormal);
 
+    vec3 viewDir_vs = normalize(-fragPos);
+
     // Assignation de la couleur finale
     vec3 lights = vec3(0.f);
-    lights += blinnPhong(normal_vs, uLightPos_vs, uLightIntensity, uKd, uKs, uShininess);
-    lights += blinnPhong(normal_vs, uLightPos_vs2, uLightIntensity2, uKd2, uKs2, uShininess2);
+    lights += blinnPhongPos(normal_vs, uLightPos_vs, uLightIntensity, uKd, uKs, uShininess);
+    lights += blinnPhongPos(normal_vs, uLightPos_vs2, uLightIntensity2, uKd2, uKs2, uShininess2);
+    lights += blinnPhongDir(normal_vs, viewDir_vs, uLightPos_vs3, uLightIntensity3, uKd3, uKs3, uShininess3);
     fragColor = vec4(texColor.xyz*lights, 1.0f);
 }

@@ -19,9 +19,9 @@ public:
     glm::vec3 getPosition() const;
     glm::vec3 getVelocity() const;
     float     getRotation() const;
-    void      setVelocity(glm::vec3 velocity) { this->velocity = velocity; }
-    void      setPosition(glm::vec3 position) { this->position = position; }
-    void      setRotation(float rotation) { this->rotation = rotation; }
+    void      setVelocity(glm::vec3 newVelocity) { this->velocity = newVelocity; }
+    void      setPosition(glm::vec3 newPosition) { this->position = newPosition; }
+    void      setRotation(float newRotation) { this->rotation = newRotation; }
 
 private:
     glm::vec3 position;

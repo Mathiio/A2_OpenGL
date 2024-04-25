@@ -31,7 +31,7 @@ public:
         }
     }
 
-    void draw(glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, float angle)
+    void draw(glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation)
     {
         for (auto& mesh : m_meshs)
         {

@@ -22,6 +22,7 @@ private:
     float movementSpeed{0.1f};
     float rotationSpeed{5.0f};
     int   numBoids;
+    bool  isNight;
 
 public:
     void setup(p6::Context& ctx);
@@ -36,4 +37,5 @@ public:
     float getMinSpeed() const { return minSpeed; }
     float getMaxSpeed() const { return maxSpeed; }
     int   getNumBoids() const { return numBoids; }
+    bool  getIsNight() const { return isNight; }
 };

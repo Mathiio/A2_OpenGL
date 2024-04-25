@@ -1,4 +1,5 @@
 #include "context/contextManager.hpp"
+#include <imgui.h>
 #include "GLFW/glfw3.h"
 #include "camera.hpp"
 #include "character/character.hpp"
@@ -18,6 +19,7 @@ void ContextManager::setup(p6::Context& ctx)
         ImGui::SliderFloat("Min speed", &minSpeed, .001f, 1.f);
         ImGui::SliderFloat("Movement speed", &movementSpeed, 0.01f, 0.1f);
         ImGui::SliderFloat("Rotation speed", &rotationSpeed, 1.0f, 5.0f);
+        ImGui::Checkbox("Jour/nuit", &isNight);
         // ImGui::InputInt("Number of boids wanted", &numBoids);
         // if (ImGui::Button("Apply"))
         // {

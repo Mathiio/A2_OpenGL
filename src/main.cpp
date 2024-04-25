@@ -62,8 +62,14 @@ int main()
     shader.use();
 
     ctx.update = [&]() {
-        // ctx.background({0.53f, 0.65f, 0.83f});
-        ctx.background({0.06f, 0.08f, 0.0f});
+        if (context.getIsNight())
+        {
+            ctx.background({0.06f, 0.08f, 0.0f});
+        }
+        else
+        {
+            ctx.background({0.53f, 0.65f, 0.83f});
+        }
         context.check_keys(ctx, camera, character);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -20,6 +20,7 @@ void ContextManager::setup(p6::Context& ctx)
         ImGui::SliderFloat("Movement speed", &movementSpeed, 0.01f, 0.1f);
         ImGui::SliderFloat("Rotation speed", &rotationSpeed, 1.0f, 5.0f);
         ImGui::Checkbox("Jour/nuit", &isNight);
+        ImGui::Checkbox("Low Poly", &isLowPoly);
         // ImGui::InputInt("Number of boids wanted", &numBoids);
         // if (ImGui::Button("Apply"))
         // {
@@ -42,7 +43,6 @@ void ContextManager::setup(p6::Context& ctx)
         // }
         ImGui::End();
     };
-
     glEnable(GL_DEPTH_TEST);
 }
 

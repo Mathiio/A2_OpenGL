@@ -1,8 +1,8 @@
 #include "mesh.hpp"
 #include <p6/p6.h>
 #include <glimac/common.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/random.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
 #include "glm/matrix.hpp"
@@ -107,7 +107,7 @@ void Mesh::loadModel(const std::string& fileName)
     bool        ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str(), nullptr);
 
     if (!err.empty())
-    { 
+    {
         std::cerr << err << std::endl;
     }
 

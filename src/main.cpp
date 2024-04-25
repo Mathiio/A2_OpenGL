@@ -51,6 +51,7 @@ int main()
 
     Mesh  decor("decor.obj", "decor.png");
     Mesh  boid("bee.obj", "bee.png");
+    Mesh  boid_lod("bee_lod.obj", "bee_lod.png");
     Meshs clouds("cloud.obj", "cloud.png", 10);
     clouds.randomPos();
     clouds.randomScale();
@@ -80,10 +81,20 @@ int main()
         lightCharacter.update(viewMatrix, character);
         lightFixed.update(viewMatrix, character);
 
-        character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid);
+        if (context.getIsLowPoly())
+        {
+            character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid_lod);
+            boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid_lod);
+        }
+        else
+        {
+            character.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid);
+            boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid);
+        }
+
         clouds.draw(ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, 0.0f);
         decor.draw(glm::vec3(0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, 0.0f);
-        boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid);
+
         boids.update(ctx.delta_time(), obstacles, context);
     };
     ctx.start();

@@ -7,15 +7,15 @@
 
 class Mesh {
 protected:
-    GLuint m_vbo;
-    GLuint m_vao;
-    glm::vec3 m_pos;
-    glm::vec3 m_scale;
+    GLuint                           m_vbo;
+    GLuint                           m_vao;
+    glm::vec3                        m_pos;
+    glm::vec3                        m_scale;
     std::vector<glimac::ShapeVertex> m_vertices;
     std::vector<int>                 m_index;
     GLsizei                          m_vertexCount;
     float                            m_Rotation;
-    GLuint m_texture;
+    GLuint                           m_texture;
 
 public:
     Mesh(const std::string& modelMesh, const std::string& modelTexture)
@@ -29,12 +29,12 @@ public:
         glDeleteBuffers(1, &m_vbo);
         glDeleteVertexArrays(1, &m_vao);
     };
-    
+
     glm::vec3 getPos() const { return m_pos; }
     glm::vec3 getScale() const { return m_scale; }
-    GLuint getTexture() const { return m_texture; }
-    void setPos(const glm::vec3& pos) { m_pos = pos; }
-    void setScale(const glm::vec3& scale) { m_scale = scale; }
+    GLuint    getTexture() const { return m_texture; }
+    void      setPos(const glm::vec3& pos) { m_pos = pos; }
+    void      setScale(const glm::vec3& scale) { m_scale = scale; }
 
     void drawArray(GLuint textName);
     void setRotation(float angle);

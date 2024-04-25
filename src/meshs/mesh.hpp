@@ -6,22 +6,21 @@
 
 class Mesh {
 private:
-    GLuint                           m_vbo;
-    GLuint                           m_vao;
+    GLuint                           m_vbo{};
+    GLuint                           m_vao{};
     glm::vec3                        m_pos;
     glm::vec3                        m_scale;
     std::vector<glimac::ShapeVertex> m_vertices;
     std::vector<int>                 m_index;
-    GLsizei                          m_vertexCount;
-    float                            m_Rotation;
-    GLuint                           m_texture;
+    GLsizei                          m_vertexCount{};
+    float                            m_Rotation{};
+    GLuint                           m_texture{};
 
 public:
     Mesh(const std::string& modelMesh, const std::string& modelTexture)
-        : m_vbo(0), m_vao(0), m_pos(0.0f), m_scale(1.0f), m_vertexCount(0), m_Rotation(0.0f), m_texture(0)
+        : m_pos(0.0f), m_scale(1.0f), m_texture(Texture::instance().loadTexture(modelTexture))
     {
         loadModel(modelMesh);
-        m_texture = Texture::instance().loadTexture(modelTexture);
     }
 
     ~Mesh()

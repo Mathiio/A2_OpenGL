@@ -6,16 +6,20 @@ void Obstacles::addObstacle(const Obstacle& obstacle)
     m_obstacles.push_back(obstacle);
 }
 
-bool Obstacles::isCollision(const glm::vec3& pos, double delta) {
-    for (const auto& obstacle : m_obstacles) {
-        if (obstacle.isCollision(pos, delta)) { 
-            return true; 
+bool Obstacles::isCollision(const glm::vec3& pos, double delta)
+{
+    for (const auto& obstacle : m_obstacles)
+    {
+        if (obstacle.isCollision(pos, delta))
+        {
+            return true;
         }
     }
-    return false; 
+    return false;
 }
 
-bool Obstacle::isCollision(const glm::vec3& pos, double delta) const{
+bool Obstacle::isCollision(const glm::vec3& pos, double delta) const
+{
     const float      xLength     = getXLength();
     const float      yLength     = getYLength();
     const float      zLength     = getZLength();

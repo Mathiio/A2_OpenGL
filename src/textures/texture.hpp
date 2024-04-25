@@ -5,19 +5,20 @@
 #include "glimac/common.hpp"
 #include "p6/p6.h"
 
-
 class Texture {
 public:
-    static Texture& instance() {
+    static Texture& instance()
+    {
         static Texture instance;
         return instance;
     }
 
-    
-    GLuint loadTexture(const std::string& filename) {
-        std::string inputfile = "assets/textures/" + filename;
-        auto it = m_textureCache.find(inputfile);
-        if (it != m_textureCache.end()) {
+    GLuint loadTexture(const std::string& filename)
+    {
+        std::string const inputfile = "assets/textures/" + filename;
+        auto        it        = m_textureCache.find(inputfile);
+        if (it != m_textureCache.end())
+        {
             return it->second;
         }
 
@@ -36,11 +37,13 @@ public:
         return textureId;
     }
 
-    void bindTexture(GLuint textureId) const {
+    void bindTexture(GLuint textureId) const
+    {
         glBindTexture(GL_TEXTURE_2D, textureId);
     }
 
-    void deleteTexture(GLuint textureId) {
+    void deleteTexture(GLuint textureId)
+    {
         glDeleteTextures(1, &textureId);
     }
 

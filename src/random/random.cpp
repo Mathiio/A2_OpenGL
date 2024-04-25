@@ -23,7 +23,7 @@ float randMarkov(glm::vec3 transition, float initial)
     while (sequence < 1.0f)
     {
         // Générer un nombre aléatoire entre 0 et 1
-        float randNum = dis(gen);
+        float const randNum = dis(gen);
 
         // Recherche de la transition basée sur le nombre aléatoire
         float cumulativeProb = 0.0f;
@@ -48,7 +48,7 @@ float randBernoulli(float p)
     std::mt19937       gen(rd());
 
     std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
-    float                                 uniform_random = uniform_dist(gen);
+    float const                           uniform_random = uniform_dist(gen);
 
     if (uniform_random < p)
     {
@@ -70,7 +70,7 @@ float randBinomial(int n, float p)
     // Génération d'un échantillon binomial
     for (int i = 0; i < n; ++i)
     {
-        double randNum = dis(gen);
+        double const randNum = dis(gen);
         if (randNum < p)
         {                // Comparaison avec la probabilité de succès
             successes++; // Incrémenter le nombre de succès si le nombre aléatoire est inférieur à la probabilité de succès
@@ -96,15 +96,15 @@ float randGeometric(double p, float minBound, float maxBound)
     std::mt19937                           gen(rd());
     std::uniform_real_distribution<double> dis(0.0, 1.0);
 
-    float timeToSuccess = 0.0f;
-    float maxTrials     = maxBound / minBound;
+    float       timeToSuccess = 0.0f;
+    float const maxTrials     = maxBound / minBound;
 
     // Génération d'un échantillon selon la loi géométrique
     while (true)
     {
         std::uniform_real_distribution<float> distribution(minBound, maxBound);
         timeToSuccess += distribution(gen);
-        double randNum = dis(gen);
+        double const randNum = dis(gen);
         if (randNum < p)
         {          // Comparaison avec la probabilité de succès
             break; // Sortir de la boucle dès que le succès est obtenu
@@ -124,10 +124,10 @@ float randExponential(int min, int max)
     std::random_device rd;
     std::mt19937       gen(rd());
 
-    float lambda = 0.5;
+    float const lambda = 0.5;
 
     std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
-    float                                 uniform_random = uniform_dist(gen);
+    float const                           uniform_random = uniform_dist(gen);
 
     float randomNumber = -log(1 - uniform_random) / lambda;
     randomNumber       = static_cast<float>(min) + static_cast<float>(max - min) * (1 - exp(-lambda * randomNumber));
@@ -146,8 +146,8 @@ float randBeta(float min, float max, float threshold)
     std::random_device rd;
     std::mt19937       gen(rd());
 
-    float alpha = 1.5f;
-    float beta  = 1.0f;
+    float const alpha = 1.5f;
+    float const beta  = 1.0f;
 
     std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
 
@@ -155,8 +155,8 @@ float randBeta(float min, float max, float threshold)
 
     while (randomNumber <= threshold)
     {
-        float u = uniform_dist(gen);
-        float v = uniform_dist(gen);
+        float const u = uniform_dist(gen);
+        float const v = uniform_dist(gen);
 
         randomNumber = pow(u, 1.0f / alpha);
         randomNumber /= pow(u, 1.0f / alpha) + pow(v, 1.0f / beta);
@@ -173,8 +173,8 @@ float randCauchy(float min, float max)
     std::mt19937       gen(rd());
 
     // Générer un nombre aléatoire selon la distribution de Cauchy centrée autour de la moyenne de min et max
-    float                            center = (max + min) / 2;
-    float                            scale  = (max - min) / 2;
+    float const                      center = (max + min) / 2;
+    float const                      scale  = (max - min) / 2;
     std::cauchy_distribution<double> distribution(center, scale);
     double                           randomNumber = distribution(gen);
 
@@ -195,9 +195,9 @@ bool randPoisson(float lambda)
     std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
 
     // Génération d'un échantillon selon la loi de Poisson
-    float L = exp(-lambda);
-    int   k = 0;
-    float p = 1;
+    float const L = exp(-lambda);
+    int         k = 0;
+    float       p = 1;
 
     while (p > L)
     {

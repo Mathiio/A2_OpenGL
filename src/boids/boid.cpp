@@ -1,9 +1,7 @@
 #include "boids/boid.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <vector>
 #include "glm/fwd.hpp"
-#include "glm/geometric.hpp"
 #include "meshs/mesh.hpp"
 #include "random/random.hpp"
 

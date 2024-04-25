@@ -7,7 +7,7 @@
 class Meshs {
 public:
     Meshs(const std::string& modelMesh, const std::string& modelTexture, int numMeshs)
-        : m_mesh(modelMesh, modelTexture), m_numMeshs(numMeshs)
+        : m_numMeshs(numMeshs), m_mesh(modelMesh, modelTexture)
     {
         for (int i = 0; i < m_numMeshs; ++i)
         {

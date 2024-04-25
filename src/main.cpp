@@ -25,11 +25,12 @@ int main()
     auto ctx = p6::Context{{.title = "Bees"}};
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    Camera    camera;
-    Character character;
-    Boids     boids;
-    Obstacles obstacles;
-    ContextManager::setup(ctx, boids);
+    Camera         camera;
+    Character      character;
+    Boids          boids;
+    Obstacles      obstacles;
+    ContextManager context;
+    context.setup(ctx);
 
     obstacles.addObstacle({{0.727f, -0.30f, 0.672f}, 0.544f, 1.30f, 0.65f});      // Grand Sapin
     obstacles.addObstacle({{-0.690f, -0.750f, 0.549f}, 0.62f, 0.66f, 0.5f});      // Ruche à abeilles
@@ -63,7 +64,7 @@ int main()
     ctx.update = [&]() {
         // ctx.background({0.53f, 0.65f, 0.83f});
         ctx.background({0.06f, 0.08f, 0.0f});
-        ContextManager::check_keys(ctx, camera, character, boids);
+        context.check_keys(ctx, camera, character);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -77,7 +78,7 @@ int main()
         clouds.draw(ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, 0.0f);
         decor.draw(glm::vec3(0.), glm::vec3{1.}, ProjMatrix, viewMatrix, uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, 0.0f);
         boids.draw(uMVPMatrixLocation, uMVMatrixLocation, uNormalMatrixLocation, ProjMatrix, viewMatrix, boid);
-        boids.update(ctx.delta_time(), obstacles);
+        boids.update(ctx.delta_time(), obstacles, context);
     };
     ctx.start();
     boid.~Mesh();

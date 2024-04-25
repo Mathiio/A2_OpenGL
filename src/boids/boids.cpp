@@ -102,11 +102,11 @@ void Boids::draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNo
 
 void Boids::randomRotation()
 {
-    glm::vec3 transition(0.1f, 0.5f, 0.4f);
+    glm::vec3 const transition(0.1f, 0.5f, 0.4f);
 
     for (auto& boid : boids)
     {
-        float newRotation = randMarkov(transition, boid.getRotation());
+        float const newRotation = randMarkov(transition, boid.getRotation());
         boid.setRotation(newRotation * 360);
     }
 }

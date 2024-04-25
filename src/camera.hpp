@@ -39,7 +39,7 @@ public:
     // Rotate
     void rotate(float degrees)
     {
-        float radians = glm::radians(degrees);
+        float const radians = glm::radians(degrees);
         m_Theta += radians;
         computeDirectionVectors();
     }
@@ -47,7 +47,7 @@ public:
     // Rotate up
     void rotateUp(float degrees)
     {
-        float radians = glm::radians(degrees);
+        float const radians = glm::radians(degrees);
         m_Phi += radians;
         computeDirectionVectors();
     }

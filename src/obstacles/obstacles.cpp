@@ -24,16 +24,9 @@ bool Obstacle::isCollision(const glm::vec3& pos, double delta) const
     const float      yLength     = getYLength();
     const float      zLength     = getZLength();
     const glm::vec3& obstaclePos = getPosition();
-    glm::vec3        minBounds   = obstaclePos - glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
-    glm::vec3        maxBounds   = obstaclePos + glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
-    if (minBounds.x - delta < pos.x && pos.x < maxBounds.x + delta && minBounds.y - delta < pos.y && pos.y < maxBounds.y + delta && minBounds.z - delta < pos.z && pos.z < maxBounds.z + delta)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    glm::vec3 const  minBounds   = obstaclePos - glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
+    glm::vec3 const  maxBounds   = obstaclePos + glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
+    return minBounds.x - delta < pos.x && pos.x < maxBounds.x + delta && minBounds.y - delta < pos.y && pos.y < maxBounds.y + delta && minBounds.z - delta < pos.z && pos.z < maxBounds.z + delta;
 }
 
 glm::vec3 Obstacles::updateCollision(const glm::vec3& pos, const glm::vec3& velocityChange, float turnFactor) const
@@ -47,8 +40,8 @@ glm::vec3 Obstacles::updateCollision(const glm::vec3& pos, const glm::vec3& velo
         const float      yLength     = obstacle.getYLength();
         const float      zLength     = obstacle.getZLength();
         const glm::vec3& obstaclePos = obstacle.getPosition();
-        glm::vec3        minBounds   = obstaclePos - glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
-        glm::vec3        maxBounds   = obstaclePos + glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
+        glm::vec3 const  minBounds   = obstaclePos - glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
+        glm::vec3 const  maxBounds   = obstaclePos + glm::vec3(xLength / 2.0f, yLength / 2.0f, zLength / 2.0f);
 
         if (obstacle.isCollision(pos, delta))
         {

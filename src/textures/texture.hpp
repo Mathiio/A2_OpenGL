@@ -24,7 +24,7 @@ public:
 
         img::Image image = p6::load_image_buffer(inputfile);
 
-        GLuint textureId;
+        GLuint textureId = 0;
         glGenTextures(1, &textureId);
         glBindTexture(GL_TEXTURE_2D, textureId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
@@ -37,12 +37,12 @@ public:
         return textureId;
     }
 
-    void bindTexture(GLuint textureId) const
+    static void bindTexture(GLuint textureId) 
     {
         glBindTexture(GL_TEXTURE_2D, textureId);
     }
 
-    void deleteTexture(GLuint textureId)
+    static void deleteTexture(GLuint textureId)
     {
         glDeleteTextures(1, &textureId);
     }

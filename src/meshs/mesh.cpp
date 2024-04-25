@@ -41,7 +41,7 @@ void Mesh::draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 
 
 void Mesh::setVbo()
 {
-    GLuint vbo = 0;
+    GLuint const vbo = 0;
     m_vbo      = vbo;
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -56,7 +56,7 @@ void Mesh::setRotation(float angle)
 
 void Mesh::setVao()
 {
-    GLuint vao = 0;
+    GLuint const vao = 0;
     m_vao      = vao;
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -97,14 +97,14 @@ const int* Mesh::getIndexPointer() const
 
 void Mesh::loadModel(const std::string& fileName)
 {
-    std::string                      inputfile = "assets/models/" + fileName;
+    std::string                      const inputfile = "assets/models/" + fileName;
     tinyobj::attrib_t                attrib;
     std::vector<tinyobj::shape_t>    shapes;
     std::vector<tinyobj::material_t> materials;
 
     std::string warn;
     std::string err;
-    bool        ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str(), nullptr);
+    bool        const ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str(), nullptr);
 
     if (!err.empty())
     {
@@ -128,7 +128,7 @@ void Mesh::loadModel(const std::string& fileName)
             // Loop over vertices in the face.
             for (size_t v = 0; v < fv; v++)
             {
-                tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+                tinyobj::index_t const idx = shape.mesh.indices[index_offset + v];
                 // access to vertex
                 auto newVertex = glimac::ShapeVertex{
 

@@ -10,7 +10,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
-void Mesh::drawArray(GLuint textName)
+void Mesh::drawArray(GLuint textName) const
 {
     glBindVertexArray(m_vao);
 

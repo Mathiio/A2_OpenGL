@@ -83,7 +83,10 @@ float randBinomial(int n, float p)
 
 float randUniform(float min, float max)
 {
-    return min + static_cast<float>(rand()) / (RAND_MAX / (max - min));
+    std::random_device                    rd;
+    std::mt19937                          gen(rd());
+    std::uniform_real_distribution<float> dis(0.0, 1.0);
+    return min + static_cast<float>(dis(gen)) / (RAND_MAX / (max - min));
 }
 
 float randGeometric(double p, float minBound, float maxBound)

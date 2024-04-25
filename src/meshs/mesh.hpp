@@ -2,11 +2,10 @@
 
 #include <glimac/common.hpp>
 #include "glm/fwd.hpp"
-#include "p6/p6.h"
 #include "textures/texture.hpp"
 
 class Mesh {
-protected:
+private:
     GLuint                           m_vbo;
     GLuint                           m_vao;
     glm::vec3                        m_pos;
@@ -19,6 +18,7 @@ protected:
 
 public:
     Mesh(const std::string& modelMesh, const std::string& modelTexture)
+        : m_vbo(0), m_vao(0), m_pos(0.0f), m_scale(1.0f), m_vertexCount(0), m_Rotation(0.0f), m_texture(0)
     {
         loadModel(modelMesh);
         m_texture = Texture::instance().loadTexture(modelTexture);
@@ -36,7 +36,7 @@ public:
     void      setPos(const glm::vec3& pos) { m_pos = pos; }
     void      setScale(const glm::vec3& scale) { m_scale = scale; }
 
-    void drawArray(GLuint textName);
+    void drawArray(GLuint textName) const;
     void setRotation(float angle);
 
     void draw(glm::vec3 pos, glm::vec3 scale, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, float angle);

@@ -12,35 +12,34 @@
 
 float randMarkov(glm::vec3 transition, float initial)
 {
-    float sequence = initial;
-
-    // Générateur de nombres aléatoires
+    // Initialisation du générateur de nombres aléatoires
     std::random_device               rd;
     std::mt19937                     gen(rd());
     std::uniform_real_distribution<> dis(0.0, 1.0);
 
-    while (true)
-    {
-        float next = 0.0f;
+    // État initial
+    glm::vec3 currentState = glm::vec3(initial, 0.0f, 0.0f);
+    float     sequence     = initial;
 
-        // Trouve la prochaine valeur en fonction des probabilités de transition
-        double randNum        = dis(gen);
-        double cumulativeProb = 0.0;
-        for (int k = 0; k < 3; ++k)
+    // Générer la séquence basée sur les probabilités de transition
+    while (sequence < 1.0f)
+    {
+        // Générer un nombre aléatoire entre 0 et 1
+        float randNum = dis(gen);
+
+        // Recherche de la transition basée sur le nombre aléatoire
+        float cumulativeProb = 0.0f;
+        for (int nextState = 0; nextState < 3; ++nextState)
         {
-            cumulativeProb += transition[k];
+            cumulativeProb += transition[nextState];
             if (randNum <= cumulativeProb)
             {
-                next = (k + randNum) / 3.0f; // Utilise l'indice k pour obtenir la prochaine valeur
+                // Ajouter la transition à la séquence
+                sequence += transition[nextState];
+                currentState[nextState] = sequence;
                 break;
             }
         }
-
-        // Ajoute la valeur actuelle à la séquence
-        sequence += next;
-
-        if (sequence <= 1.0f)
-            break;
     }
     return sequence - initial;
 }
@@ -65,49 +64,26 @@ int randBernoulli(float p)
     }
 }
 
-// Fonction pour générer un nombre aléatoire selon une distribution bimodale entre min et max
-glm::vec3 randBimodale(double min, double max, double peak1, double peak2, double stdDev1, double stdDev2)
+float randBinomial(int n, double p)
 {
-    double u = static_cast<double>(rand()) / RAND_MAX;
-    double randNumX, randNumY, randNumZ;
+    // Initialisation du générateur de nombres aléatoires
+    std::random_device rd;
+    std::mt19937       gen(rd());
 
-    if (u < 0.5)
-    {
-        randNumX = peak1 + stdDev1 * sqrt(-2 * log(1 - static_cast<double>(rand()) / RAND_MAX)) * cos(2 * M_PI * static_cast<double>(rand()) / RAND_MAX);
-    }
-    else
-    {
-        randNumX = peak2 + stdDev2 * sqrt(-2 * log(1 - static_cast<double>(rand()) / RAND_MAX)) * cos(2 * M_PI * static_cast<double>(rand()) / RAND_MAX);
-    }
+    int successes = 0;
 
-    u = static_cast<double>(rand()) / RAND_MAX;
-
-    if (u < 0.5)
+    // Génération d'un échantillon binomial
+    for (int i = 0; i < n; ++i)
     {
-        randNumY = peak1 + stdDev1 * sqrt(-2 * log(1 - static_cast<double>(rand()) / RAND_MAX)) * cos(2 * M_PI * static_cast<double>(rand()) / RAND_MAX);
-    }
-    else
-    {
-        randNumY = peak2 + stdDev2 * sqrt(-2 * log(1 - static_cast<double>(rand()) / RAND_MAX)) * cos(2 * M_PI * static_cast<double>(rand()) / RAND_MAX);
+        double randNum = static_cast<double>(rand()) / RAND_MAX; // Générer un nombre aléatoire entre 0 et 1
+        if (randNum < p)
+        {                // Comparaison avec la probabilité de succès
+            successes++; // Incrémenter le nombre de succès si le nombre aléatoire est inférieur à la probabilité de succès
+        }
     }
 
-    u = static_cast<double>(rand()) / RAND_MAX;
-
-    if (u < 0.5)
-    {
-        randNumZ = peak1 + stdDev1 * sqrt(-2 * log(1 - static_cast<double>(rand()) / RAND_MAX)) * cos(2 * M_PI * static_cast<double>(rand()) / RAND_MAX);
-    }
-    else
-    {
-        randNumZ = peak2 + stdDev2 * sqrt(-2 * log(1 - static_cast<double>(rand()) / RAND_MAX)) * cos(2 * M_PI * static_cast<double>(rand()) / RAND_MAX);
-    }
-
-    // Assurer que les nombres générés sont dans l'intervalle spécifié
-    randNumX = std::min(std::max(min, randNumX), max);
-    randNumY = std::min(std::max(min, randNumY), max);
-    randNumZ = std::min(std::max(min, randNumZ), max);
-
-    return glm::vec3(randNumX, randNumY, randNumZ);
+    // Retourner la proportion de succès dans l'échantillon
+    return static_cast<float>(successes) / n;
 }
 
 float randUniform(float min, float max)
@@ -115,25 +91,32 @@ float randUniform(float min, float max)
     return min + static_cast<float>(rand()) / (RAND_MAX / (max - min));
 }
 
-// Random number selon distribution gaussienne avec moyenne mu et écart-type sigma et un intervalle
-glm::vec3 randGaussian(double mu, double sigma, double xmin, double xmax, double height, double zmin, double zmax)
+float randGeometric(double p, float minBound, float maxBound)
 {
-    double x, z;
-    do
-    {
-        double u1 = randUniform(0, 1);
-        double u2 = randUniform(0, 1);
-        x         = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
-    } while (x < xmin && x > xmax);
+    // Initialisation du générateur de nombres aléatoires
+    std::random_device rd;
+    std::mt19937       gen(rd());
 
-    do
-    {
-        double u1 = randUniform(0, 1);
-        double u2 = randUniform(0, 1);
-        z         = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
-    } while (z < zmin && z > zmax);
+    float timeToSuccess = 0.0f;
+    float maxTrials     = maxBound / minBound;
 
-    return glm::vec3(mu + sigma * x, height, mu + sigma * z);
+    // Génération d'un échantillon selon la loi géométrique
+    while (true)
+    {
+        timeToSuccess += minBound + ((maxBound - minBound) * (static_cast<float>(rand()) / RAND_MAX));
+        double randNum = static_cast<double>(rand()) / RAND_MAX; // Générer un nombre aléatoire entre 0 et 1
+        if (randNum < p)
+        {          // Comparaison avec la probabilité de succès
+            break; // Sortir de la boucle dès que le succès est obtenu
+        }
+        if (timeToSuccess >= maxTrials)
+        { // Si le temps écoulé atteint la borne supérieure, retourner la borne supérieure
+            return maxBound;
+        }
+    }
+
+    // Si le temps écoulé est inférieur à la borne inférieure, retourner la borne inférieure
+    return (timeToSuccess < minBound) ? minBound : timeToSuccess;
 }
 
 float randExponential(int min, int max)
@@ -184,12 +167,41 @@ float randBeta(float min, float max, float threshold)
 
 float randCauchy(float min, float max)
 {
+    // Initialisation du générateur de nombres aléatoires
     std::random_device rd;
     std::mt19937       gen(rd());
 
-    std::cauchy_distribution<double> distribution((max + min) / 2, (max - min) / 2);
+    // Générer un nombre aléatoire selon la distribution de Cauchy centrée autour de la moyenne de min et max
+    float                            center = (max + min) / 2;
+    float                            scale  = (max - min) / 2;
+    std::cauchy_distribution<double> distribution(center, scale);
+    double                           randomNumber = distribution(gen);
 
-    double randomNumber = distribution(gen);
+    // Assurer que le nombre aléatoire généré est entre min et max
+    while (randomNumber < min || randomNumber > max)
+    {
+        randomNumber = distribution(gen);
+    }
 
-    return randomNumber;
+    return static_cast<float>(randomNumber);
+}
+
+bool randPoisson(float lambda)
+{
+    // Initialisation du générateur de nombres aléatoires
+    std::random_device rd;
+    std::mt19937       gen(rd());
+
+    // Génération d'un échantillon selon la loi de Poisson
+    float L = exp(-lambda);
+    int   k = 0;
+    float p = 1;
+    do
+    {
+        k++;
+        p *= static_cast<float>(rand()) / RAND_MAX;
+    } while (p > L);
+
+    // Retourner l'échantillon de Poisson
+    return (k == 1);
 }

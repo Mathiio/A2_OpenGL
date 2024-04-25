@@ -112,6 +112,14 @@ void Boids::randomRotation()
     }
 }
 
+void Boids::randomScale()
+{
+    for (auto& boid : boids)
+    {
+        boid.setScale(glm::vec3(randCauchy(0.5f, 1.2f)));
+    }
+}
+
 void Boids::addBoid(int number)
 {
     for (int i = 0; i < number; ++i)

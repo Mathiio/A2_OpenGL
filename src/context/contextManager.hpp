@@ -20,7 +20,7 @@ private:
     float movementSpeed{0.1f};
     float rotationSpeed{5.0f};
     int   numBoids;
-    bool  isNight{randPoisson(0.1f)};
+    bool  isNight{randPoisson(0.01f)};
     bool  isLowPoly{false};
 
 public:

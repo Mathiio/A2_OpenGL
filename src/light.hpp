@@ -4,6 +4,7 @@
 #include "character/character.hpp"
 #include "glimac/common.hpp"
 #include "glm/fwd.hpp"
+#include "glm/gtx/transform.hpp"
 #include "p6/p6.h"
 #include "random/random.hpp"
 
@@ -42,24 +43,36 @@ public:
             uLightPosLocation       = glGetUniformLocation(shader.id(), "uLightPos_vs2");
             uLightIntensityLocation = glGetUniformLocation(shader.id(), "uLightIntensity2");
         }
+        else if (index == 3)
+        {
+            uKdLocation             = glGetUniformLocation(shader.id(), "uKd3");
+            uKsLocation             = glGetUniformLocation(shader.id(), "uKs3");
+            uShininessLocation      = glGetUniformLocation(shader.id(), "uShininess3");
+            uLightPosLocation       = glGetUniformLocation(shader.id(), "uLightPos_vs3");
+            uLightIntensityLocation = glGetUniformLocation(shader.id(), "uLightIntensity3");
+        }
     }
 
-    void update(glm::mat4 viewMatrix, Character& character)
+    void update(glm::mat4 viewMatrix, Camera camera)
     {
         glm::vec4 lightPos(0.0f);
         if (index == 1)
         {
-            lightPos = {1.1f, 1.1f, 1.1f, 1.0f};
+            lightPos = glm::vec4(camera.getPosition(), 1.0f);
         }
         else if (index == 2)
         {
-            lightPos = {character.getPosition().x - 0.5f, character.getPosition().y + 0.5f, character.getPosition().z + 0.5f, 1.0f};
+            lightPos = {0.0f, 2.0f, 0.0f, 1.0f};
+        }
+        else if (index == 3)
+        {
+            lightPos = {0.0f, 1.0f, -3.0f, 1.0f};
         }
         position = glm::vec3(viewMatrix * lightPos);
         glUniform3f(uKdLocation, color.x, color.y, color.z);
         glUniform3f(uKsLocation, color.x, color.y, color.z);
         glUniform1f(uShininessLocation, 4.0f);
         glUniform3f(uLightPosLocation, position.x, position.y, position.z);
-        glUniform3f(uLightIntensityLocation, 2.0f, 2.0f, 2.0f);
+        glUniform3f(uLightIntensityLocation, 1.0f, 1.0f, 1.0f);
     }
 };

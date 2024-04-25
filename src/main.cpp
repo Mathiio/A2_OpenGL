@@ -59,6 +59,7 @@ int main()
 
     Light lightCharacter(1, shader);
     Light lightFixed(2, shader);
+    Light lightDir(3, shader);
 
     shader.use();
 
@@ -78,8 +79,9 @@ int main()
         glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 viewMatrix = camera.getViewMatrix();
 
-        lightCharacter.update(viewMatrix, character);
-        lightFixed.update(viewMatrix, character);
+        lightCharacter.update(viewMatrix, camera);
+        lightFixed.update(viewMatrix, camera);
+        lightDir.update(viewMatrix, camera);
 
         if (context.getIsLowPoly())
         {

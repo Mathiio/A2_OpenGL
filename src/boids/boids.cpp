@@ -3,9 +3,15 @@
 #include "glm/fwd.hpp"
 #include "random/random.hpp"
 
-Boids::Boids(int nbBoids)
-    : boids(nbBoids), numBoids(nbBoids)
+void Boids::initNumberBoid()
 {
+    for (int i = 0; i < 25; i++)
+    {
+        if (randBernoulli(randUniform(0.0f, 1.0f)))
+        {
+            boids.emplace_back();
+        }
+    }
 }
 
 void Boids::update(float delta_time, const Obstacles& obstacles, ContextManager context)
@@ -108,14 +114,6 @@ void Boids::randomRotation()
     {
         float const newRotation = randMarkov(transition, boid.getRotation());
         boid.setRotation(newRotation * 360);
-    }
-}
-
-void Boids::randomScale()
-{
-    for (auto& boid : boids)
-    {
-        boid.setScale(glm::vec3(randCauchy(0.5f, 1.2f)));
     }
 }
 

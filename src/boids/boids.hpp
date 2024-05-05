@@ -10,14 +10,18 @@
 
 class Boids {
 public:
-    Boids(int nbBoids = static_cast<int>(randExponential(1, 25)));
+    Boids()
+        : numBoids(0)
+    {
+        initNumberBoid();
+    }
 
+    void initNumberBoid();
     void addBoid(int number = 1);
     void removeBoid(int number = 1);
     void update(float delta_time, const Obstacles& obstacles, ContextManager context);
     void draw(GLuint uMVPMatrixLocation, GLuint uMVMatrixLocation, GLuint uNormalMatrixLocation, glm::mat4 ProjMatrix, glm::mat4 viewMatrix, Mesh& mesh) const;
     void randomRotation();
-    void randomScale();
 
 private:
     std::vector<Boid> boids;

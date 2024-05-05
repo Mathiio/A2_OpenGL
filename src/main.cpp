@@ -1,5 +1,6 @@
 #include <imgui.h>
 #include <cstdlib>
+#include "random/random.hpp"
 
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "boids/boids.hpp"
@@ -51,7 +52,6 @@ int main()
     Meshs clouds("cloud.obj", "cloud.png", 10);
     clouds.randomPos();
     clouds.randomScale();
-    boids.randomScale();
     boids.randomRotation();
 
     Light lightCharacter(1, shader);

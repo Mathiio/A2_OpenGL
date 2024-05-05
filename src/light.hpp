@@ -20,7 +20,7 @@ public:
     GLuint    uLightIntensityLocation;
 
     Light(int index, const p6::Shader& shader)
-        : index(index), color(randUniform(0.5f, 1.0f), randUniform(0.5f, 1.0f), randUniform(0.5f, 1.0f)), position(0.0f, 0.0f, 0.0f), uKdLocation(0), uKsLocation(0), uShininessLocation(0), uLightPosLocation(0), uLightIntensityLocation(0)
+        : index(index), color(randUniform(1.0f, 1.0f), randUniform(1.0f, 1.0f), randUniform(1.0f, 1.0f)), position(0.0f, 0.0f, 0.0f), uKdLocation(0), uKsLocation(0), uShininessLocation(0), uLightPosLocation(0), uLightIntensityLocation(0)
     {
         setup(shader);
     }

@@ -42,20 +42,18 @@ float randMarkov(glm::vec3 transition, float initial)
     return sequence - initial;
 }
 
-float randBernoulli(float p)
+bool randBernoulli(float p)
 {
-    std::random_device rd;
-    std::mt19937       gen(rd());
+    std::random_device               rd;
+    std::mt19937                     gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0); // Distribution uniforme entre 0 et 1
 
-    std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
-    float const                           uniform_random = uniform_dist(gen);
+    // Générer un nombre aléatoire entre 0 et 1
+    double rand_num = dis(gen);
 
-    if (uniform_random < p)
-    {
-        std::uniform_real_distribution<float> bernoulli_dist(0.2f, 1.5f);
-        return bernoulli_dist(gen);
-    }
-    return 1.0f;
+    // Si le nombre aléatoire est inférieur ou égal à la probabilité de succès,
+    // alors l'expérience est un succès, sinon c'est un échec
+    return rand_num <= p;
 }
 
 float randBinomial(int n, float p)
@@ -86,7 +84,7 @@ float randUniform(float min, float max)
     std::random_device                    rd;
     std::mt19937                          gen(rd());
     std::uniform_real_distribution<float> dis(0.0, 1.0);
-    return min + static_cast<float>(dis(gen)) / (RAND_MAX / (max - min));
+    return min + static_cast<float>(dis(gen)) * (max - min);
 }
 
 float randGeometric(double p, float minBound, float maxBound)
@@ -119,7 +117,7 @@ float randGeometric(double p, float minBound, float maxBound)
     return (timeToSuccess < minBound) ? minBound : timeToSuccess;
 }
 
-float randExponential(int min, int max)
+float randExponential(float min, float max)
 {
     std::random_device rd;
     std::mt19937       gen(rd());
@@ -130,7 +128,7 @@ float randExponential(int min, int max)
     float const                           uniform_random = uniform_dist(gen);
 
     float randomNumber = -log(1 - uniform_random) / lambda;
-    randomNumber       = static_cast<float>(min) + static_cast<float>(max - min) * (1 - exp(-lambda * randomNumber));
+    randomNumber       = min + (max - min) * (1 - exp(-lambda * randomNumber));
 
     return randomNumber;
 }

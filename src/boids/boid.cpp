@@ -19,7 +19,7 @@ Boid::Boid()
         p6::random::number(-0.8f, 0.8f)
     })
     , velocity(glm::vec3{0.01f, 0.01f, 0.01f})
-    , scale(randBernoulli(1.0f))
+    , scale(glm::vec3(randCauchy(0.5f, 1.2f)))
     , rotation(0.0f)
 {}
 
